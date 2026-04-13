@@ -1,0 +1,21 @@
+{
+  "record_id": "gev_48d6a4c81c91",
+  "input_values": {
+    "x": 0.39,
+    "y": 0.61
+  },
+  "x": 0.39,
+  "y": 0.61,
+  "r_value": 0.511744,
+  "zone": "DOMINANT",
+  "domain": "research",
+  "timestamp": "2026-04-13T08:50:55Z",
+  "mapping_rule_version": "mapping_v1_assembled",
+  "output_produced": "compute",
+  "thresholds": {
+    "lower": 0.33,
+    "upper": 0.5,
+    "reference": 0.39
+  },
+  "schema_version": "v1"
+}

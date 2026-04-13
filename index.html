@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Heyer Livin' — Interactive Data Simulator</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=IBM+Plex+Mono:wght@300;400;500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --red:#c0281a;--blue:#1a3fc0;--gold:#c9a84c;
+  --black:#080808;--white:#ede8e0;
+}
+body{background:var(--black);color:var(--white);font-family:'IBM Plex Mono',monospace;min-height:100vh;overflow-x:hidden}
+h1,h2,h3,.display{font-family:'Playfair Display',serif}
+.coord,.mono{font-family:'Space Mono',monospace}
+.layer{display:none;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:2rem;text-align:center}
+.layer.active{display:flex}
+.question{font-size:clamp(.85rem,2vw,1.1rem);max-width:640px;margin:0 auto 2.5rem;letter-spacing:.04em;line-height:1.7;opacity:.75}
+
+/* COIN STYLES */
+.coins-row{display:flex;gap:3rem;margin-bottom:2rem}
+.coin-container{perspective:600px;cursor:pointer}
+.coin-container:hover .coin-body{box-shadow:0 0 30px rgba(201,168,76,.15)}
+.coin-label{font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;margin-bottom:.75rem;opacity:.6}
+.coin-body{width:140px;height:140px;border-radius:50%;position:relative;transform-style:preserve-3d;transition:transform .1s}
+.coin-body.spinning{transition:none}
+.coin-face{position:absolute;width:100%;height:100%;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;backface-visibility:hidden;border:2px solid}
+.coin-face.front{z-index:2}
+.coin-face.back{transform:rotateY(180deg)}
+.coin-face.red-face{background:rgba(192,40,26,.15);border-color:var(--red);color:var(--red)}
+.coin-face.blue-face{background:rgba(26,63,192,.15);border-color:var(--blue);color:var(--blue)}
+.coin-value{font-family:'Space Mono',monospace;font-size:1.1rem;color:var(--gold)}
+
+/* LAYER 1 - THREE SPINS */
+.slots-row{display:flex;gap:2rem;margin-bottom:2rem}
+.slot{width:110px;height:110px;border-radius:50%;border:2px solid;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:.3;transition:all .4s}
+.slot.filled{opacity:1}
+.slot .big-num{font-family:'Playfair Display',serif;font-size:2rem;font-weight:700}
+.slot .sub-val{font-family:'Space Mono',monospace;font-size:.6rem;opacity:.5}
+.spin-btn{background:none;border:1px solid var(--gold);color:var(--gold);font-family:'IBM Plex Mono',monospace;padding:.6rem 2.5rem;cursor:pointer;letter-spacing:.12em;text-transform:uppercase;font-size:.75rem;transition:all .3s;margin-bottom:1.5rem}
+.spin-btn:hover{background:rgba(201,168,76,.1)}
+.spin-btn:disabled{opacity:.3;cursor:default}
+.pattern-text{font-size:.8rem;color:var(--gold);letter-spacing:.08em;min-height:1.5em}
+
+/* LAYER 2 - CARDS */
+.cards-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:2rem}
+.card{width:160px;height:220px;border:1px solid;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:all .4s;padding:1rem}
+.card:hover{transform:scale(1.05);box-shadow:0 0 20px rgba(201,168,76,.1)}
+.card .card-num{font-family:'Playfair Display',serif;font-size:2.5rem;font-weight:700}
+.card .card-fortune{font-size:.55rem;line-height:1.5;margin-top:.75rem;opacity:.6;max-width:130px}
+
+/* LAYER 2 - DICE */
+.tetra-container{margin-bottom:2rem;cursor:pointer}
+.tetra-face{fill:none;stroke-width:1.5;cursor:pointer;transition:all .3s}
+.tetra-face:hover{fill-opacity:.15}
+.tetra-num{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;pointer-events:none}
+
+/* LAYER 3 */
+.constellation-container{margin-bottom:2rem}
+.constellation-star{fill:currentColor}
+.constellation-line{stroke:currentColor;stroke-width:1;opacity:.4}
+.fortune-full{font-size:.85rem;max-width:500px;line-height:1.7;margin:1.5rem auto;font-style:italic;opacity:.8}
+.coord-display{font-family:'Space Mono',monospace;color:var(--gold);font-size:1rem;letter-spacing:.1em;margin:1rem 0}
+
+.zoom-card{border:1px solid var(--gold);padding:3rem;max-width:360px;margin-bottom:2rem}
+.zoom-card .card-num{font-family:'Playfair Display',serif;font-size:4rem;font-weight:900;color:var(--gold)}
+.zoom-card .card-fortune{font-size:.85rem;line-height:1.7;margin-top:1.5rem;opacity:.8}
+
+.nav-btn{background:none;border:1px solid var(--gold);color:var(--gold);font-family:'IBM Plex Mono',monospace;padding:.6rem 2rem;cursor:pointer;letter-spacing:.1em;font-size:.7rem;text-transform:uppercase;transition:all .3s;margin-top:1rem}
+.nav-btn:hover{background:rgba(201,168,76,.1)}
+
+/* LAYER 4 - THE FIELD */
+.field-panels{display:flex;gap:1.5rem;flex-wrap:wrap;justify-content:center;margin-bottom:2.5rem;width:100%;max-width:1100px}
+.panel{flex:1;min-width:280px;max-width:360px;border:1px solid rgba(237,232,224,.1);padding:1.2rem}
+.panel-title{font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;opacity:.5;margin-bottom:1rem}
+.panel canvas{width:100%!important;max-height:250px}
+
+.heptagon-panel{display:flex;flex-direction:column;align-items:center}
+.hepta-label{font-size:.7rem;opacity:.5;margin-top:.5rem}
+
+.book-test{border-top:1px solid rgba(237,232,224,.1);padding-top:2rem;margin-top:1rem;max-width:500px;width:100%}
+.book-test h3{font-size:.75rem;letter-spacing:.15em;text-transform:uppercase;opacity:.5;margin-bottom:1rem}
+.book-page{font-family:'Playfair Display',serif;font-size:4rem;font-weight:900;color:var(--gold);margin:1rem 0}
+.book-zone{font-size:.7rem;opacity:.6;letter-spacing:.05em}
+
+.stats-row{display:flex;gap:2rem;flex-wrap:wrap;justify-content:center;margin-top:2rem;font-size:.7rem;letter-spacing:.08em;opacity:.6}
+.stat span{color:var(--gold)}
+
+.restart-btn{background:none;border:1px solid rgba(237,232,224,.2);color:var(--white);font-family:'IBM Plex Mono',monospace;padding:.75rem 2rem;cursor:pointer;letter-spacing:.12em;text-transform:uppercase;font-size:.65rem;margin-top:2rem;transition:all .3s}
+.restart-btn:hover{border-color:var(--gold);color:var(--gold)}
+
+.red-border{border-color:var(--red)}.blue-border{border-color:var(--blue)}
+.red-text{color:var(--red)}.blue-text{color:var(--blue)}.gold-text{color:var(--gold)}
+
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{animation:fadeIn .6s ease forwards}
+</style>
+</head>
+<body>
+
+<!-- LAYER 0 — THE COIN -->
+<div id="layer0" class="layer active">
+  <p class="question">"What, exactly, is being measured when a system appears to produce randomness?"</p>
+  <div class="coins-row">
+    <div class="coin-container" onclick="flipCoin('left')">
+      <div class="coin-label" id="leftLabel">Horizontal — X</div>
+      <div class="coin-body" id="leftCoin">
+        <div class="coin-face front red-face" id="leftFront">X</div>
+        <div class="coin-face back blue-face" id="leftBack">X</div>
+      </div>
+      <div class="coin-value" id="leftValue">&nbsp;</div>
+    </div>
+    <div class="coin-container" onclick="flipCoin('right')">
+      <div class="coin-label" id="rightLabel">Vertical — Y</div>
+      <div class="coin-body" id="rightCoin">
+        <div class="coin-face front blue-face" id="rightFront">Y</div>
+        <div class="coin-face back red-face" id="rightBack">Y</div>
+      </div>
+      <div class="coin-value" id="rightValue">&nbsp;</div>
+    </div>
+  </div>
+  <p class="pattern-text" id="coinHint">tap a coin to begin</p>
+</div>
+
+<!-- LAYER 1 — THREE SPINS -->
+<div id="layer1" class="layer">
+  <h2 class="display" style="margin-bottom:.5rem;font-size:1.3rem">Three Spins</h2>
+  <p class="question" style="margin-bottom:1.5rem">Each spin is independent. The pattern determines your path.</p>
+  <div class="slots-row">
+    <div class="slot" id="slot0"><span class="big-num">—</span><span class="sub-val">&nbsp;</span></div>
+    <div class="slot" id="slot1"><span class="big-num">—</span><span class="sub-val">&nbsp;</span></div>
+    <div class="slot" id="slot2"><span class="big-num">—</span><span class="sub-val">&nbsp;</span></div>
+  </div>
+  <button class="spin-btn" id="spinBtn" onclick="doSpin()">Spin</button>
+  <p class="pattern-text" id="patternText">&nbsp;</p>
+</div>
+
+<!-- LAYER 2A — RED PATH: 4 CARDS -->
+<div id="layer2cards" class="layer">
+  <h2 class="display" style="margin-bottom:.5rem;font-size:1.3rem">Four Coordinates</h2>
+  <p class="question" style="margin-bottom:1.5rem">Choose one card. It holds your Y coordinate.</p>
+  <div class="cards-grid" id="cardsGrid"></div>
+</div>
+
+<!-- LAYER 2B — BLUE PATH: TRIANGLE DICE -->
+<div id="layer2dice" class="layer">
+  <h2 class="display" style="margin-bottom:.5rem;font-size:1.3rem">Triangle Dice</h2>
+  <p class="question" style="margin-bottom:1.5rem">Four faces. Choose one.</p>
+  <div class="tetra-container" id="tetraContainer"></div>
+</div>
+
+<!-- LAYER 3A — BLUE: CONSTELLATION -->
+<div id="layer3constellation" class="layer">
+  <div class="constellation-container" id="constellationSvg"></div>
+  <h2 class="display" id="constellationName" style="font-size:1.5rem"></h2>
+  <p class="fortune-full" id="constellationFortune"></p>
+  <p class="coord-display" id="constellationCoord"></p>
+  <button class="nav-btn" onclick="goToField()">View the field →</button>
+</div>
+
+<!-- LAYER 3B — RED: ZOOM CARD -->
+<div id="layer3zoom" class="layer">
+  <div class="zoom-card fade-in">
+    <div class="card-num" id="zoomNum"></div>
+    <div class="card-fortune" id="zoomFortune"></div>
+  </div>
+  <p class="coord-display" id="zoomCoord"></p>
+  <p class="mono" style="font-size:.65rem;opacity:.4;letter-spacing:.1em">coordinate confirmed</p>
+  <button class="nav-btn" onclick="goToField()">View the field →</button>
+</div>
+
+<!-- LAYER 4 — THE FIELD -->
+<div id="layer4" class="layer">
+  <h2 class="display" style="font-size:1.5rem;margin-bottom:2rem">The Field</h2>
+  <div class="field-panels">
+    <div class="panel">
+      <div class="panel-title">Live Line Graph — Red vs Blue</div>
+      <canvas id="lineChart"></canvas>
+    </div>
+    <div class="panel heptagon-panel">
+      <div class="panel-title">Seven-Sided Clock</div>
+      <svg id="heptagonSvg" width="220" height="220" viewBox="0 0 220 220"></svg>
+      <div class="hepta-label" id="heptaLabel">Session 0</div>
+      <div class="coord-display" id="heptaCoord" style="font-size:.75rem"></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">DNA Scatter Plot</div>
+      <canvas id="scatterChart"></canvas>
+    </div>
+  </div>
+
+  <div class="book-test">
+    <h3>5,000 pages. The book falls open.</h3>
+    <button class="spin-btn" id="bookBtn" onclick="openBook()">Open the book</button>
+    <div class="book-page" id="bookPage">&nbsp;</div>
+    <div class="book-zone" id="bookZone">&nbsp;</div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat">Red sessions: <span id="statRed">0</span></div>
+    <div class="stat">Blue sessions: <span id="statBlue">0</span></div>
+    <div class="stat">Total plots: <span id="statPlots">0</span></div>
+    <div class="stat">Total sessions: <span id="statSessions">0</span></div>
+  </div>
+
+  <button class="restart-btn" onclick="restartSession()">New session — sides swap</button>
+</div>
+
+<script>
+// ═══════════════════════════════════════════
+// DATA PERSISTENCE
+// ═══════════════════════════════════════════
+const STORAGE_KEY = 'hl_sim_data';
+const FORTUNES = [
+  "The floor does not move. The ceiling does not move. Everything in between does.",
+  "You did not solve for whether it would happen. You solved for why it already did.",
+  "Intention + Culture = Design. Chance is not choice.",
+  "The compass reads the field honestly from any position without choosing direction.",
+  "Existence is certain. The meeting is the variable.",
+  "The number is the glyph. The glyph is the proof.",
+  "What systems call chance is the recurring execution of a prior structural choice.",
+  "The simulation does not produce a result. It produces a coordinate.",
+  "Two of three samples confirm the event is near-certain. The third is what makes it interesting.",
+  "The room is the collapse point.",
+  "The pattern itself — not any individual — is the co-founding intelligence.",
+  "P(encounter | existence) ≠ P(encounter).",
+  "The graph does not stabilize. It documents independent agents producing a shared coordinate.",
+  "What is excluded before the record begins is not a gap. It is a design decision.",
+  "Erasure codes as zero — not absence but presence recorded as peripheral.",
+  "Once existence is confirmed at P = 1, the denominator changes.",
+  "The rupture holds the position even when the order does not.",
+  "The researcher must be indistinguishable from the population to measure the field accurately.",
+  "Steak is more expensive, not cheaper. The hierarchy is the load-bearing structure.",
+  "The tool measures the tool.",
+  "The equation was solved before it was written.",
+  "The bottleneck population is the only one that resists certainty.",
+  "Dismantling inequality generates value because the system is hierarchy-dependent.",
+  "The 2% who chose the minority option are not the unchosen. They are the top 2%.",
+  "Human culture is not a choice. AI is not a chance.",
+  "The quantum of cultural exchange is the moment two structures meet and something moves.",
+  "Independent agents producing a shared coordinate without coordination.",
+  "Choice and chance are not human properties — they are structural ones.",
+  "The eyes were mine to see and his to give.",
+  "The player is part of the measurement."
+];
+
+function loadData() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch(e) {}
+  return {
+    sessions: 0, red_count: 0, blue_count: 0,
+    swap_state: false, plot_total: 0,
+    plots: [], book_opens: [],
+    seed_data: [30, 270, 1234]
+  };
+}
+
+function saveData() { localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA)); }
+
+let DATA = loadData();
+
+// Pre-load seed data as plots if first run
+if (DATA.plots.length === 0 && DATA.seed_data) {
+  DATA.seed_data.forEach((v, i) => {
+    DATA.plots.push({
+      session: 0, color: i % 2 === 0 ? 'red' : 'blue', layer: -1,
+      x: v / 100, y: Math.sin(v / 100 * Math.PI) * (Math.random() * 0.8 + 0.2),
+      value: v, timestamp: Date.now()
+    });
+    DATA.plot_total++;
+  });
+  saveData();
+}
+
+function logPlot(layer, x, y, value, color) {
+  DATA.plots.push({
+    session: DATA.sessions, color: color || sessionColor,
+    layer, x, y, value, timestamp: Date.now()
+  });
+  DATA.plot_total++;
+  saveData();
+}
+
+// ═══════════════════════════════════════════
+// SESSION STATE
+// ═══════════════════════════════════════════
+let sessionColor = 'red';
+let sessionX = 0;
+let sessionY = 0;
+let spinCount = 0;
+let spinValues = [];
+let usedFortunes = new Set();
+let currentRoute = '';
+
+function getSessionColor() {
+  return DATA.swap_state ? 'blue' : 'red';
+}
+
+function getOtherColor() {
+  return DATA.swap_state ? 'red' : 'blue';
+}
+
+// ═══════════════════════════════════════════
+// UTILITIES
+// ═══════════════════════════════════════════
+function rand(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+function randDecimal() { return parseFloat((Math.random() * 99.9999).toFixed(4)); }
+function randomFortune() {
+  let available = [];
+  for (let i = 0; i < FORTUNES.length; i++) {
+    if (!usedFortunes.has(i)) available.push(i);
+  }
+  if (available.length === 0) { usedFortunes.clear(); available = FORTUNES.map((_, i) => i); }
+  const idx = available[rand(0, available.length - 1)];
+  usedFortunes.add(idx);
+  return { index: idx, text: FORTUNES[idx] };
+}
+
+function showLayer(id) {
+  document.querySelectorAll('.layer').forEach(l => l.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function colorStyle(c) { return c === 'red' ? 'var(--red)' : 'var(--blue)'; }
+
+// ═══════════════════════════════════════════
+// LAYER 0 — THE COIN
+// ═══════════════════════════════════════════
+function initCoins() {
+  sessionColor = getSessionColor();
+  const primary = sessionColor;
+  const secondary = getOtherColor();
+  const lf = document.getElementById('leftFront');
+  const lb = document.getElementById('leftBack');
+  const rf = document.getElementById('rightFront');
+  const rb = document.getElementById('rightBack');
+  lf.className = `coin-face front ${primary}-face`;
+  lb.className = `coin-face back ${secondary}-face`;
+  rf.className = `coin-face front ${secondary}-face`;
+  rb.className = `coin-face back ${primary}-face`;
+}
+
+let coinFlipped = false;
+
+function flipCoin(side) {
+  if (coinFlipped) return;
+  coinFlipped = true;
+  const coinBody = document.getElementById(side === 'left' ? 'leftCoin' : 'rightCoin');
+  const valueEl = document.getElementById(side === 'left' ? 'leftValue' : 'rightValue');
+  const spinVal = randDecimal();
+  const intPart = Math.floor(spinVal);
+  const resolvedColor = intPart % 2 === 0 ? sessionColor : getOtherColor();
+
+  // Spin animation
+  coinBody.classList.add('spinning');
+  let rotations = 0;
+  const totalRotations = 8 + rand(4, 8);
+  const axis = side === 'left' ? 'rotateX' : 'rotateY';
+
+  const spinInterval = setInterval(() => {
+    rotations++;
+    coinBody.style.transform = `${axis}(${rotations * 180}deg)`;
+    if (rotations >= totalRotations) {
+      clearInterval(spinInterval);
+      coinBody.classList.remove('spinning');
+      // Land on the result face
+      const finalAngle = resolvedColor === sessionColor ? 0 : 180;
+      coinBody.style.transition = 'transform 0.4s ease-out';
+      coinBody.style.transform = `${axis}(${finalAngle}deg)`;
+      valueEl.textContent = spinVal.toFixed(4);
+      sessionX = spinVal / 100;
+
+      logPlot(0, sessionX, 0, spinVal, resolvedColor);
+
+      document.getElementById('coinHint').textContent = `${resolvedColor} · ${spinVal.toFixed(4)}`;
+      document.getElementById('coinHint').style.color = colorStyle(resolvedColor);
+
+      setTimeout(() => {
+        sessionColor = resolvedColor;
+        initLayer1();
+        showLayer('layer1');
+      }, 1200);
+    }
+  }, 80);
+}
+
+// ═══════════════════════════════════════════
+// LAYER 1 — THREE SPINS
+// ═══════════════════════════════════════════
+function initLayer1() {
+  spinCount = 0;
+  spinValues = [];
+  const slots = document.querySelectorAll('.slot');
+  slots.forEach(s => {
+    s.classList.remove('filled');
+    s.style.borderColor = colorStyle(sessionColor);
+    s.style.color = colorStyle(sessionColor);
+    s.querySelector('.big-num').textContent = '—';
+    s.querySelector('.sub-val').textContent = '\u00a0';
+  });
+  document.getElementById('spinBtn').disabled = false;
+  document.getElementById('patternText').textContent = '\u00a0';
+}
+
+function doSpin() {
+  if (spinCount >= 3) return;
+  const val = rand(0, 99);
+  const dec = randDecimal();
+  spinValues.push({ int: val, dec: dec });
+
+  const slot = document.getElementById('slot' + spinCount);
+  slot.classList.add('filled');
+  slot.querySelector('.big-num').textContent = val;
+  slot.querySelector('.sub-val').textContent = dec.toFixed(4);
+
+  logPlot(1, sessionX, val / 100, val, sessionColor);
+
+  spinCount++;
+  if (spinCount >= 3) {
+    document.getElementById('spinBtn').disabled = true;
+    evaluateSpins();
+  }
+}
+
+function evaluateSpins() {
+  const evens = spinValues.filter(v => v.int % 2 === 0).length;
+  const odds = 3 - evens;
+
+  // All match → re-spin
+  if (evens === 3 || odds === 3) {
+    document.getElementById('patternText').textContent = `All ${evens === 3 ? 'even' : 'odd'} — re-spinning...`;
+    setTimeout(() => {
+      initLayer1();
+      // Auto-spin 3 times
+      let autoCount = 0;
+      const autoSpin = setInterval(() => {
+        doSpin();
+        autoCount++;
+        if (autoCount >= 3) clearInterval(autoSpin);
+      }, 400);
+    }, 1000);
+    return;
+  }
+
+  if (evens === 2 && odds === 1) {
+    currentRoute = 'cards';
+    document.getElementById('patternText').textContent = '2 even, 1 odd → four coordinates';
+    document.getElementById('patternText').style.color = 'var(--red)';
+    setTimeout(() => initCards(), 1500);
+  } else {
+    currentRoute = 'dice';
+    document.getElementById('patternText').textContent = '2 odd, 1 even → triangle dice';
+    document.getElementById('patternText').style.color = 'var(--blue)';
+    setTimeout(() => initDice(), 1500);
+  }
+}
+
+// ═══════════════════════════════════════════
+// LAYER 2A — RED PATH: 4 CARDS
+// ═══════════════════════════════════════════
+function initCards() {
+  const grid = document.getElementById('cardsGrid');
+  grid.innerHTML = '';
+  const cardData = [];
+  for (let i = 0; i < 4; i++) {
+    const val = rand(0, 99);
+    const fortune = randomFortune();
+    cardData.push({ value: val, fortune });
+
+    const card = document.createElement('div');
+    card.className = 'card red-border';
+    card.innerHTML = `<div class="card-num" style="color:var(--red)">${val}</div>
+      <div class="card-fortune">${fortune.text}</div>`;
+    card.onclick = () => selectCard(i, cardData[i]);
+    grid.appendChild(card);
+
+    logPlot(2, sessionX, val / 100, val, sessionColor);
+  }
+  showLayer('layer2cards');
+}
+
+function selectCard(index, data) {
+  sessionY = data.value / 100;
+  logPlot(2, sessionX, sessionY, data.value, sessionColor);
+
+  // Show zoom card (Layer 3 red)
+  document.getElementById('zoomNum').textContent = data.value;
+  document.getElementById('zoomNum').style.color = 'var(--gold)';
+  document.getElementById('zoomFortune').textContent = data.fortune.text;
+  document.getElementById('zoomCoord').textContent = `(${sessionX.toFixed(4)}, ${sessionY.toFixed(4)})`;
+
+  logPlot(3, sessionX, sessionY, data.value, sessionColor);
+  showLayer('layer3zoom');
+}
+
+// ═══════════════════════════════════════════
+// LAYER 2B — BLUE PATH: TRIANGLE DICE
+// ═══════════════════════════════════════════
+function initDice() {
+  const container = document.getElementById('tetraContainer');
+  const faceValues = [];
+  for (let i = 0; i < 4; i++) {
+    faceValues.push(rand(0, 99));
+  }
+
+  // Draw tetrahedron as SVG with 4 visible triangular faces
+  const cx = 150, cy = 140;
+  const r = 110;
+  // Triangular arrangement with overlapping faces
+  const points = [
+    { x: cx, y: cy - r },           // top
+    { x: cx - r * 0.87, y: cy + r * 0.5 },  // bottom-left
+    { x: cx + r * 0.87, y: cy + r * 0.5 },  // bottom-right
+    { x: cx, y: cy + r * 0.15 }              // center (inner point)
+  ];
+
+  const faces = [
+    [0, 1, 3], // top-left
+    [0, 3, 2], // top-right
+    [1, 2, 3], // bottom
+    [0, 1, 2]  // outer (background)
+  ];
+
+  const faceColors = ['var(--blue)', 'var(--blue)', 'var(--blue)', 'var(--blue)'];
+
+  let svg = `<svg width="300" height="280" viewBox="0 0 300 280">`;
+  faces.forEach((face, i) => {
+    const pts = face.map(p => `${points[p].x},${points[p].y}`).join(' ');
+    const centroid = {
+      x: face.reduce((s, p) => s + points[p].x, 0) / 3,
+      y: face.reduce((s, p) => s + points[p].y, 0) / 3
+    };
+    svg += `<polygon points="${pts}" class="tetra-face" stroke="var(--blue)"
+      fill="rgba(26,63,192,0.05)" onclick="selectFace(${i}, ${faceValues[i]})" />`;
+    svg += `<text x="${centroid.x}" y="${centroid.y + 6}" text-anchor="middle"
+      class="tetra-num" fill="var(--blue)" onclick="selectFace(${i}, ${faceValues[i]})">${faceValues[i]}</text>`;
+
+    logPlot(2, sessionX, faceValues[i] / 100, faceValues[i], sessionColor);
+  });
+  svg += `</svg>`;
+  container.innerHTML = svg;
+  showLayer('layer2dice');
+}
+
+function selectFace(index, value) {
+  sessionY = value / 100;
+  logPlot(2, sessionX, sessionY, value, sessionColor);
+
+  // Constellation names
+  const constellations = [
+    { name: 'Fire', subtitle: 'Activation, Rupture', color: '#e05533' },
+    { name: 'Water', subtitle: 'Probability, Flow', color: '#3366cc' },
+    { name: 'Earth', subtitle: 'Structure, Foundation', color: '#c9a84c' },
+    { name: 'Air', subtitle: 'Perception, Signal', color: '#88ccdd' }
+  ];
+
+  const c = constellations[index];
+  const fortune = randomFortune();
+
+  // Generate constellation stars
+  const starCount = rand(6, 8);
+  const stars = [];
+  for (let i = 0; i < starCount; i++) {
+    stars.push({ x: 80 + Math.random() * 160, y: 40 + Math.random() * 140 });
+  }
+
+  let svg = `<svg width="320" height="220" viewBox="0 0 320 220">`;
+  // Lines connecting nearby stars
+  for (let i = 0; i < stars.length; i++) {
+    for (let j = i + 1; j < stars.length; j++) {
+      const d = Math.hypot(stars[i].x - stars[j].x, stars[i].y - stars[j].y);
+      if (d < 100) {
+        svg += `<line x1="${stars[i].x}" y1="${stars[i].y}" x2="${stars[j].x}" y2="${stars[j].y}"
+          class="constellation-line" style="color:${c.color}" />`;
+      }
+    }
+  }
+  stars.forEach(s => {
+    svg += `<circle cx="${s.x}" cy="${s.y}" r="3" class="constellation-star" style="color:${c.color}" />`;
+  });
+  svg += `</svg>`;
+
+  document.getElementById('constellationSvg').innerHTML = svg;
+  document.getElementById('constellationName').textContent = `${c.name} — ${c.subtitle}`;
+  document.getElementById('constellationName').style.color = c.color;
+  document.getElementById('constellationFortune').textContent = fortune.text;
+  document.getElementById('constellationCoord').textContent = `(${sessionX.toFixed(4)}, ${sessionY.toFixed(4)})`;
+
+  logPlot(3, sessionX, sessionY, value, sessionColor);
+  showLayer('layer3constellation');
+}
+
+// ═══════════════════════════════════════════
+// LAYER 4 — THE FIELD
+// ═══════════════════════════════════════════
+let lineChartInstance = null;
+let scatterChartInstance = null;
+
+function goToField() {
+  // Update session counts
+  if (sessionColor === 'red') DATA.red_count++;
+  else DATA.blue_count++;
+  DATA.sessions++;
+  saveData();
+
+  showLayer('layer4');
+  renderLineChart();
+  renderHeptagon();
+  renderScatterChart();
+  updateStats();
+}
+
+function renderLineChart() {
+  const ctx = document.getElementById('lineChart').getContext('2d');
+  if (lineChartInstance) lineChartInstance.destroy();
+
+  // Build running red/blue counts per plot
+  let rc = 0, bc = 0;
+  const redLine = [], blueLine = [], labels = [];
+  DATA.plots.forEach((p, i) => {
+    if (p.color === 'red') rc++; else bc++;
+    redLine.push(rc);
+    blueLine.push(bc);
+    labels.push(i + 1);
+  });
+
+  lineChartInstance = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        { label: 'Red', data: redLine, borderColor: '#c0281a', borderWidth: 1.5, pointRadius: 0, tension: 0.3 },
+        { label: 'Blue', data: blueLine, borderColor: '#1a3fc0', borderWidth: 1.5, pointRadius: 0, tension: 0.3 }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { display: true, grid: { color: 'rgba(237,232,224,.05)' }, ticks: { color: 'rgba(237,232,224,.3)', maxTicksLimit: 6, font: { size: 9 } } },
+        y: { display: true, grid: { color: 'rgba(237,232,224,.05)' }, ticks: { color: 'rgba(237,232,224,.3)', font: { size: 9 } } }
+      }
+    }
+  });
+}
+
+function renderHeptagon() {
+  const svg = document.getElementById('heptagonSvg');
+  const cx = 110, cy = 110, r = 85;
+  let path = '';
+  const pts = [];
+  for (let i = 0; i < 7; i++) {
+    const angle = (Math.PI * 2 * i / 7) - Math.PI / 2;
+    const x = cx + r * Math.cos(angle);
+    const y = cy + r * Math.sin(angle);
+    pts.push({ x, y });
+    path += (i === 0 ? 'M' : 'L') + `${x},${y}`;
+  }
+  path += 'Z';
+
+  // Hand angle: advance by 360/7 per session
+  const handAngle = ((DATA.sessions % 7) * (360 / 7)) - 90;
+  const handRad = handAngle * Math.PI / 180;
+  const hx = cx + (r - 10) * Math.cos(handRad);
+  const hy = cy + (r - 10) * Math.sin(handRad);
+  const handColor = sessionColor === 'red' ? 'var(--red)' : 'var(--blue)';
+
+  svg.innerHTML = `
+    <path d="${path}" fill="none" stroke="rgba(237,232,224,.15)" stroke-width="1"/>
+    <line x1="${cx}" y1="${cy}" x2="${hx}" y2="${hy}" stroke="${handColor}" stroke-width="2.5" stroke-linecap="round"/>
+    <circle cx="${cx}" cy="${cy}" r="4" fill="${handColor}"/>
+  `;
+
+  document.getElementById('heptaLabel').textContent = `Session ${DATA.sessions}`;
+  document.getElementById('heptaCoord').textContent = `(${sessionX.toFixed(4)}, ${sessionY.toFixed(4)})`;
+}
+
+function renderScatterChart() {
+  const ctx = document.getElementById('scatterChart').getContext('2d');
+  if (scatterChartInstance) scatterChartInstance.destroy();
+
+  const redPts = [], bluePts = [];
+  DATA.plots.forEach(p => {
+    // Apply sine-wave envelope for DNA/hourglass shape
+    const envY = Math.sin(p.x * Math.PI) * p.y;
+    const point = { x: p.x, y: envY };
+    if (p.color === 'red') redPts.push(point);
+    else bluePts.push(point);
+  });
+
+  scatterChartInstance = new Chart(ctx, {
+    type: 'scatter',
+    data: {
+      datasets: [
+        { label: 'Red', data: redPts, backgroundColor: 'rgba(192,40,26,.6)', pointRadius: 2.5 },
+        { label: 'Blue', data: bluePts, backgroundColor: 'rgba(26,63,192,.6)', pointRadius: 2.5 }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { display: true, grid: { color: 'rgba(237,232,224,.05)' }, ticks: { color: 'rgba(237,232,224,.3)', font: { size: 9 } } },
+        y: { display: true, grid: { color: 'rgba(237,232,224,.05)' }, ticks: { color: 'rgba(237,232,224,.3)', font: { size: 9 } } }
+      }
+    }
+  });
+}
+
+function updateStats() {
+  document.getElementById('statRed').textContent = DATA.red_count;
+  document.getElementById('statBlue').textContent = DATA.blue_count;
+  document.getElementById('statPlots').textContent = DATA.plot_total;
+  document.getElementById('statSessions').textContent = DATA.sessions;
+}
+
+// ═══════════════════════════════════════════
+// BOOK TEST
+// ═══════════════════════════════════════════
+function openBook() {
+  const page = rand(1, 5000);
+  document.getElementById('bookPage').textContent = page;
+
+  let zone = '';
+  if (page >= 360 && page <= 365) {
+    zone = 'Clock zone · P = 6/5000 = 0.0012';
+  } else if (page === 7) {
+    zone = 'The wind · P = 1/5000 = 0.0002';
+  } else if (page >= 278 && page <= 827) {
+    zone = 'Navigator zone · P = 550/5000 = 0.11';
+  } else if (page === 5000) {
+    zone = 'Final coordinate · P = 2.9 × 10⁻²⁰ (proven)';
+  } else {
+    zone = 'General field · P = 1/5000 = 0.0002';
+  }
+  document.getElementById('bookZone').textContent = zone;
+
+  DATA.book_opens.push({ page, zone, timestamp: Date.now(), session: DATA.sessions });
+  logPlot(4, page / 5000, sessionY, page, sessionColor);
+}
+
+// ═══════════════════════════════════════════
+// RESTART
+// ═══════════════════════════════════════════
+function restartSession() {
+  DATA.swap_state = !DATA.swap_state;
+  saveData();
+
+  coinFlipped = false;
+  spinCount = 0;
+  spinValues = [];
+  usedFortunes.clear();
+  sessionX = 0;
+  sessionY = 0;
+  currentRoute = '';
+
+  // Reset coin display
+  document.getElementById('leftValue').innerHTML = '&nbsp;';
+  document.getElementById('rightValue').innerHTML = '&nbsp;';
+  document.getElementById('leftCoin').style.transform = '';
+  document.getElementById('rightCoin').style.transform = '';
+  document.getElementById('leftCoin').style.transition = '';
+  document.getElementById('rightCoin').style.transition = '';
+  document.getElementById('coinHint').textContent = 'tap a coin to begin';
+  document.getElementById('coinHint').style.color = '';
+
+  initCoins();
+  showLayer('layer0');
+}
+
+// ═══════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════
+initCoins();
+</script>
+</body>
+</html>

@@ -1,0 +1,23 @@
+{
+  "$schema_version": "v1",
+  "schema_name": "glyph_event_record_unified",
+  "required_fields": [
+    "record_id",
+    "input_values",
+    "x",
+    "y",
+    "r_value",
+    "zone",
+    "domain",
+    "timestamp",
+    "mapping_rule_version",
+    "output_produced"
+  ],
+  "zone_definitions": {
+    "SUBORDINATED": "R < 0.33",
+    "STRUCTURAL": "0.33 <= R <= 0.50",
+    "DOMINANT": "R > 0.50"
+  },
+  "equation": "R = x / (x + y^2)",
+  "reference_point": 0.39
+}

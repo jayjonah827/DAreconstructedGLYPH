@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heyer Livin â Structure for what matters</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --color-bg-primary: #0a0a0a;
+            --color-bg-secondary: #111111;
+            --color-bg-tertiary: #1a1a1a;
+            --color-bg-quaternary: #242424;
+            --color-text-primary: #f5f5f5;
+            --color-text-muted: #888888;
+            --color-border: #2e2e2e;
+            --color-accent: #d62828;
+            --color-accent-dark: #a81e1e;
+            --font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            --section-label-size: 0.65rem;
+            --section-title-size: clamp(1.8rem, 4vw, 3rem);
+        }
+
+        html, body {
+            background-color: var(--color-bg-primary);
+            color: var(--color-text-primary);
+            font-family: var(--font-family);
+            line-height: 1.6;
+        }
+
+        /* NAVIGATION */
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background-color: var(--color-bg-primary);
+            border-bottom: 1px solid var(--color-border);
+            padding: 1rem 2rem;
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        .nav-logo-heyerlivin {
+            color: var(--color-text-primary);
+        }
+
+        .nav-logo-livin {
+            color: var(--color-accent);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--color-text-primary);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: var(--color-accent);
+        }
+
+        .nav-links a.active {
+            color: var(--color-accent);
+        }
+
+        .nav-links a.active::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--color-accent);
+        }
+
+        @media (max-width: 560px) {
+            .nav-links {
+                display: none;
+            }
+        }
+
+        /* HERO SECTION */
+        .hero {
+            padding: 6rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .hero-eyebrow {
+            font-size: var(--section-label-size);
+            color: var(--color-accent);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 1rem;
+        }
+
+        .hero-headline {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .hero-subheading {
+            font-size: 1.3rem;
+            color: var(--color-text-muted);
+            margin-bottom: 3rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-ctas {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 4rem;
+        }
+
+        .btn {
+            padding: 0.95rem 2.5rem;
+            font-size: 0.95rem;
+            font-weight: 600;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: var(--font-family);
+            letter-spacing: 0.01em;
+        }
+
+        .btn-primary {
+            background-color: var(--color-accent);
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--color-accent-dark);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: var(--color-text-primary);
+            border: 1.5px solid var(--color-border);
+        }
+
+        .btn-outline:hover {
+            border-color: var(--color-accent);
+            color: var(--color-accent);
+        }
+
+        .hero-proof {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-top: 4rem;
+            padding-top: 3rem;
+            border-top: 1px solid var(--color-border);
+        }
+
+        .proof-item {
+            text-align: center;
+        }
+
+        .proof-item-label {
+            font-size: 0.75rem;
+            color: var(--color-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.5rem;
+        }
+
+        .proof-item-value {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        /* OBSERVATION BAR */
+        .observation {
+            background-color: var(--color-bg-secondary);
+            border-top: 1px solid var(--color-border);
+            border-bottom: 1px solid var(--color-border);
+            padding: 4rem 2rem;
+        }
+
+        .observation-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+        }
+
+        .observation-column h3 {
+            font-size: var(--section-label-size);
+            color: var(--color-accent);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 1.5rem;
+        }
+
+        .observation-column p {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            color: var(--color-text-primary);
+        }
+
+        @media (max-width: 900px) {
+            .observation-container {
+                grid-template-columns: 1fr;
+                gap: 3rem;
+            }
+        }
+
+        /* SYSTEM SECTION */
+        .system {
+            padding: 6rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-label {
+            font-size: var(--section-label-size);
+            color: var(--color-accent);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 1rem;
+        }
+
+        .section-title {
+            font-size: var(--section-title-size);
+            font-weight: 800;
+            margin-bottom: 3rem;
+            letter-spacing: -0.02em;
+        }
+
+        .system-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+
+        .system-card {
+            background-color: var(--color-bg-secondary);
+            border-top: 3px solid var(--color-accent);
+            padding: 2.5rem;
+            border: 1px solid var(--color-border);
+            border-top: 3px solid var(--color-accent);
+            transition: all 0.3s ease;
+        }
+
+        .system-card:hover {
+            background-color: var(--color-bg-tertiary);
+        }
+
+        .system-card-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--color-accent);
+            margin-bottom: 1rem;
+        }
+
+        .system-card-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .system-card p {
+            color: var(--color-text-muted);
+            margin-bottom: 1.5rem;
+        }
+
+        .system-card-details {
+            font-size: 0.95rem;
+            color: var(--color-text-muted);
+            line-height: 1.8;
+        }
+
+        @media (max-width: 900px) {
+            .system-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+        }
+
+        /* PRODUCTS SECTION */
+        .products {
+            background-color: var(--color-bg-secondary);
+            padding: 6rem 2rem;
+            border-top: 1px solid var(--color-border);
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .products-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .product-card {
+            background-color: var(--color-bg-tertiary);
+            border: 1px solid var(--color-border);
+            border-top: 2px solid var(--color-accent);
+            padding: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .product-card:hover {
+            background-color: var(--color-bg-quaternary);
+            border-color: var(--color-accent);
+        }
+
+        .product-price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--color-accent);
+            margin-bottom: 0.5rem;
+        }
+
+        .product-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .product-description {
+            font-size: 0.95rem;
+            color: var(--color-text-muted);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .product-cta {
+            font-size: 0.9rem;
+            color: var(--color-accent);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .product-cta:hover {
+            transform: translateX(4px);
+        }
+
+        @media (max-width: 900px) {
+            .products-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 560px) {
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* CLOSE SECTION */
+        .close {
+            padding: 6rem 2rem;
+            max-width: 700px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .close-headline {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 3rem;
+            letter-spacing: -0.02em;
+        }
+
+        .email-form {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .email-form input {
+            flex: 1;
+            min-width: 250px;
+            padding: 1rem;
+            background-color: var(--color-bg-secondary);
+            border: 1px solid var(--color-border);
+            color: var(--color-text-primary);
+            font-family: var(--font-family);
+            font-size: 0.95rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .email-form input:focus {
+            outline: none;
+            border-color: var(--color-accent);
+        }
+
+        .email-form input::placeholder {
+            color: var(--color-text-muted);
+        }
+
+        .close-disclaimer {
+            font-size: 0.85rem;
+            color: var(--color-text-muted);
+            margin-top: 2rem;
+            line-height: 1.7;
+        }
+
+        /* FOOTER */
+        footer {
+            background-color: var(--color-bg-secondary);
+            border-top: 1px solid var(--color-border);
+            padding: 3rem 2rem;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-logo {
+            font-size: 1.3rem;
+            font-weight: 800;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .footer-links a {
+            color: var(--color-text-primary);
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--color-accent);
+        }
+
+        .footer-divider {
+            border-top: 1px solid var(--color-border);
+            padding-top: 2rem;
+            margin-top: 2rem;
+            font-size: 0.85rem;
+            color: var(--color-text-muted);
+            text-align: center;
+        }
+
+        @media (max-width: 560px) {
+            .footer-container {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+        }
+
+        /* COIN FLIP GAME */
+        .coin-flip-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+            margin: 4rem 0;
+        }
+
+        .coin {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #d62828, #a81e1e);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            box-shadow: 0 10px 30px rgba(214, 40, 40, 0.3);
+            user-select: none;
+        }
+
+        .coin:hover {
+            transform: scale(1.05);
+        }
+
+        .coin.flipping {
+            animation: flip 0.6s ease-in-out;
+        }
+
+        @keyframes flip {
+            0% {
+                transform: rotateY(0) rotateX(0);
+            }
+            50% {
+                transform: rotateY(1080deg) rotateX(360deg);
+            }
+            100% {
+                transform: rotateY(0) rotateX(0);
+            }
+        }
+
+        .coin-result {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--color-accent);
+            min-height: 1.5rem;
+        }
+
+        .coin-instruction {
+            font-size: 0.9rem;
+            color: var(--color-text-muted);
+        }
+    </style>
+</head>
+<body>
+    <!-- NAVIGATION -->
+    <nav>
+        <div class="nav-container">
+            <div class="nav-logo">
+                <span class="nav-logo-heyerlivin">Heyer</span><span class="nav-logo-livin">Livin</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html" class="active">Home</a></li>
+                <li><a href="scholarship.html">Scholarship</a></li>
+                <li><a href="filing.html">Filing</a></li>
+                <li><a href="research.html">Research</a></li>
+                <li><a href="https://heyerlivin.com">Store</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <section class="hero">
+        <div class="hero-eyebrow">HeyerLivin â Structure for what matters</div>
+        <h1 class="hero-headline">Build systems, not stress.</h1>
+        <p class="hero-subheading">Structure for your life, your culture, your income.</p>
+
+        <div class="hero-ctas">
+            <button class="btn btn-primary" onclick="document.querySelector('.system').scrollIntoView({ behavior: 'smooth' })">Start with the game</button>
+            <a href="https://heyerlivin.com" class="btn btn-outline">Shop the system</a>
+        </div>
+
+        <div class="hero-proof">
+            <div class="proof-item">
+                <div class="proof-item-label">Innovation</div>
+                <div class="proof-item-value">K(t) Framework â Patent Pending, USPTO 2026</div>
+            </div>
+            <div class="proof-item">
+                <div class="proof-item-label">Availability</div>
+                <div class="proof-item-value">4 digital systems available now</div>
+            </div>
+            <div class="proof-item">
+                <div class="proof-item-label">Price</div>
+                <div class="proof-item-value">Starting at $27</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- OBSERVATION BAR -->
+    <section class="observation">
+        <div class="observation-container">
+            <div class="observation-column">
+                <h3>The Observation</h3>
+                <p>You have the planner. The tabs. The app. The notebook. None of it connects. Your school, your money, and your ideas live in separate places. That's not a discipline problem. That's a structure problem.</p>
+            </div>
+            <div class="observation-column">
+                <h3>The Reframe</h3>
+                <p>Scattered outcomes come from scattered systems. When identity, workflow, and output are in one structure, the results follow a pattern â not luck. That pattern is measurable.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- SYSTEM SECTION -->
+    <section class="system">
+        <div class="section-label">The System</div>
+        <h2 class="section-title">Three Pillars, One Structure</h2>
+
+        <div class="system-grid">
+            <div class="system-card">
+                <div class="system-card-number">01</div>
+                <h3 class="system-card-title">Identity</h3>
+                <p>Know what you're working with.</p>
+                <div class="system-card-details">
+                    Cultural identity mapping, values as system inputs, self-assessment tools
+                </div>
+            </div>
+
+            <div class="system-card">
+                <div class="system-card-number">02</div>
+                <h3 class="system-card-title">Workflow</h3>
+                <p>Connect your school, money, and ideas.</p>
+                <div class="system-card-details">
+                    School-to-income pipeline, idea capture and filtering, weekly structure templates
+                </div>
+            </div>
+
+            <div class="system-card">
+                <div class="system-card-number">03</div>
+                <h3 class="system-card-title">Output</h3>
+                <p>Turn structure into income.</p>
+                <div class="system-card-details">
+                    Income from existing knowledge, pattern tracking tools, digital product creation guides
+                </div>
+            </div>
+        </div>
+
+        <!-- COIN FLIP GAME -->
+        <div class="coin-flip-container">
+            <h3 style="margin-top: 4rem; font-size: 1.5rem;">Try the Game</h3>
+            <div class="coin-instruction">Click the coin to flip â test the system</div>
+            <div class="coin" id="coin" onclick="flipCoin()">ð©</div>
+            <div class="coin-result" id="result"></div>
+        </div>
+    </section>
+
+    <!-- PRODUCTS SECTION -->
+    <section class="products">
+        <div class="products-container">
+            <div class="section-label">Shop</div>
+            <h2 class="section-title">Digital Systems</h2>
+
+            <div class="products-grid">
+                <div class="product-card">
+                    <div class="product-price">$27</div>
+                    <h3 class="product-name">Coin Flip Decision Game</h3>
+                    <p class="product-description">Learn randomness and structure through interactive play. Master the framework in 10 minutes.</p>
+                    <a href="https://heyerlivin.com" class="product-cta">Get it now â</a>
+                </div>
+
+                <div class="product-card">
+                    <div class="product-price">$27</div>
+                    <h3 class="product-name">Family Transmission Calculator</h3>
+                    <p class="product-description">Map your cultural wealth. Calculate what you inherit and what you create. Generational tool.</p>
+                    <a href="https://heyerlivin.com" class="product-cta">Get it now â</a>
+                </div>
+
+                <div class="product-card">
+                    <div class="product-price">$27</div>
+                    <h3 class="product-name">Winter Guide</h3>
+                    <p class="product-description">Navigate seasonal transitions. Build resilience. Structure for the hardest months.</p>
+                    <a href="https://heyerlivin.com" class="product-cta">Get it now â</a>
+                </div>
+
+                <div class="product-card">
+                    <div class="product-price">$27.80</div>
+                    <h3 class="product-name">Self-Healing Journal</h3>
+                    <p class="product-description">Prompts for identity, workflow, and output. 52 weeks of structured reflection and growth.</p>
+                    <a href="https://heyerlivin.com" class="product-cta">Get it now â</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CLOSE SECTION -->
+    <section class="close">
+        <h2 class="close-headline">If it's not a system, it won't last.</h2>
+
+        <form class="email-form" onsubmit="handleEmailSubmit(event)">
+            <input type="email" placeholder="your@email.com" required>
+            <button type="submit" class="btn btn-primary">Join</button>
+        </form>
+
+        <p class="close-disclaimer">
+            We respect your privacy. You'll receive updates about new systems, frameworks, and the K(t) research. Unsubscribe anytime. By joining, you agree to our privacy practices and terms of use.
+        </p>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-logo">
+                <span class="nav-logo-heyerlivin">Heyer</span><span class="nav-logo-livin">Livin</span>
+            </div>
+            <ul class="footer-links">
+                <li><a href="https://heyerlivin.com">Store</a></li>
+                <li><a href="index.html">The Game</a></li>
+                <li><a href="index.html">The System</a></li>
+                <li><a href="https://heyerlivin.com">Contact</a></li>
+            </ul>
+        </div>
+
+        <div class="footer-divider">
+            K(t) Framework â Patent Pending, USPTO 2026. Oakland, California. Â© 2026 Heyer Livin LLC. All rights reserved.
+        </div>
+    </footer>
+
+    <script>
+        function flipCoin() {
+            const coin = document.getElementById('coin');
+            const result = document.getElementById('result');
+
+            // Prevent multiple flips at once
+            if (coin.classList.contains('flipping')) return;
+
+            coin.classList.add('flipping');
+            result.textContent = '';
+
+            // Determine random outcome
+            const outcome = Math.random() < 0.5 ? 'Heads' : 'Tails';
+
+            // Show result after animation
+            setTimeout(() => {
+                coin.classList.remove('flipping');
+                result.textContent = `Result: ${outcome}`;
+            }, 600);
+        }
+
+        function handleEmailSubmit(event) {
+            event.preventDefault();
+            const email = event.target.querySelector('input[type="email"]').value;
+
+            // Reset form
+            event.target.reset();
+
+            // Show confirmation
+            const form = event.target;
+            const originalHTML = form.innerHTML;
+            form.innerHTML = '<p style="color: #d62828; font-weight: 600;">Welcome. Check your email for next steps.</p>';
+
+            // Restore form after 3 seconds
+            setTimeout(() => {
+                form.innerHTML = originalHTML;
+            }, 3000);
+        }
+
+        // Active nav link handling
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+            const navLinks = document.querySelectorAll('.nav-links a');
+
+            navLinks.forEach(link => {
+                if (link.getAttribute('href') === currentPage ||
+                    (currentPage === '' && link.getAttribute('href') === 'index.html')) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
