@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scholarship Committee â Heyer Livin</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: #0a0a0a;
+            color: #f5f5f5;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+        }
+
+        /* Navigation */
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 999;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #2e2e2e;
+            padding: 1.25rem 2rem;
+        }
+
+        nav .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        nav .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-weight: 800;
+            font-size: 1.25rem;
+            text-decoration: none;
+            color: #f5f5f5;
+        }
+
+        nav .logo .livin {
+            color: #1a5fb4;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #888888;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+
+        nav a:hover {
+            color: #f5f5f5;
+        }
+
+        nav a.active {
+            color: #1a5fb4;
+        }
+
+        /* Responsive Nav */
+        @media (max-width: 768px) {
+            nav ul {
+                gap: 1rem;
+            }
+            nav a {
+                font-size: 0.85rem;
+            }
+        }
+
+        /* Containers & Spacing */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        section {
+            padding: 4rem 0;
+            border-bottom: 1px solid #2e2e2e;
+        }
+
+        section:last-of-type {
+            border-bottom: none;
+        }
+
+        /* Section Labels & Titles */
+        .section-label {
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: #1a5fb4;
+            margin-bottom: 1rem;
+        }
+
+        .section-title {
+            font-size: clamp(1.8rem, 4vw, 3rem);
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+        }
+
+        /* Hero Section */
+        #hero {
+            padding: 6rem 0;
+            background: linear-gradient(180deg, #111111 0%, #0a0a0a 100%);
+        }
+
+        .hero-eyebrow {
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: #888888;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-headline {
+            font-size: clamp(2.2rem, 5vw, 3.5rem);
+            font-weight: 800;
+            margin-bottom: 1rem;
+            line-height: 1.15;
+        }
+
+        .hero-subheadline {
+            font-size: clamp(1rem, 2vw, 1.25rem);
+            color: #888888;
+            margin-bottom: 2rem;
+            max-width: 600px;
+            line-height: 1.5;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            border: 2px solid #1a5fb4;
+            background: #1a5fb4;
+            color: #f5f5f5;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 700;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background: #154a8a;
+            border-color: #154a8a;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #1a5fb4;
+        }
+
+        .btn-secondary:hover {
+            background: #1a5fb4;
+            color: #f5f5f5;
+        }
+
+        /* Two-Column Layout */
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: start;
+        }
+
+        @media (max-width: 768px) {
+            .two-column {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+        }
+
+        /* Cards */
+        .card {
+            background: #111111;
+            border: 1px solid #2e2e2e;
+            border-top: 3px solid #1a5fb4;
+            padding: 2rem;
+        }
+
+        .card-label {
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: #1a5fb4;
+            margin-bottom: 0.75rem;
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 800;
+            margin-bottom: 0.75rem;
+        }
+
+        .card-text {
+            font-size: 0.95rem;
+            color: #888888;
+            line-height: 1.6;
+        }
+
+        /* Card Grids */
+        .card-grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+
+        .card-grid-mixed {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+
+        .card-grid-mixed .card:nth-child(4),
+        .card-grid-mixed .card:nth-child(5) {
+            grid-column: span 1;
+        }
+
+        @media (max-width: 1024px) {
+            .card-grid-3,
+            .card-grid-mixed {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .card-grid-mixed .card:nth-child(4),
+            .card-grid-mixed .card:nth-child(5) {
+                grid-column: span 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .card-grid-3,
+            .card-grid-mixed {
+                grid-template-columns: 1fr;
+            }
+
+            .card-grid-mixed .card:nth-child(4),
+            .card-grid-mixed .card:nth-child(5) {
+                grid-column: span 1;
+            }
+        }
+
+        /* Full Width Text Section */
+        .text-section {
+            max-width: 800px;
+        }
+
+        .text-section p {
+            font-size: 1rem;
+            color: #888888;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+
+        .text-section p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Founder Section */
+        .founder-block {
+            background: #111111;
+            border: 1px solid #2e2e2e;
+            border-top: 3px solid #1a5fb4;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .founder-name {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+
+        .founder-bio {
+            font-size: 0.95rem;
+            color: #888888;
+            line-height: 1.6;
+        }
+
+        /* Closing Section */
+        .closing {
+            background: #111111;
+            padding: 3rem 2rem;
+            border: 1px solid #2e2e2e;
+            text-align: center;
+        }
+
+        .closing-text {
+            font-size: 0.95rem;
+            color: #888888;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .closing-text:last-of-type {
+            margin-bottom: 2rem;
+        }
+
+        .contact-link {
+            color: #1a5fb4;
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .contact-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Footer */
+        footer {
+            background: #0a0a0a;
+            border-top: 1px solid #2e2e2e;
+            padding: 2rem;
+            text-align: center;
+            color: #888888;
+            font-size: 0.85rem;
+        }
+
+        footer .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        @media (max-width: 768px) {
+            footer .container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 768px) {
+            section {
+                padding: 3rem 0;
+            }
+
+            #hero {
+                padding: 4rem 0;
+            }
+
+            .container {
+                padding: 0 1.5rem;
+            }
+
+            nav .container {
+                padding: 0 1.5rem;
+            }
+
+            nav ul {
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="container">
+            <a href="index.html" class="logo">
+                Heyer <span class="livin">Livin</span>
+            </a>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="scholarship.html" class="active">Scholarship</a></li>
+                <li><a href="filing.html">Filing</a></li>
+                <li><a href="research.html">Research</a></li>
+                <li><a href="https://heyerlivin.com">Store</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="hero">
+        <div class="container">
+            <p class="hero-eyebrow">HeyerLivin â Scholarship Overview</p>
+            <h1 class="hero-headline">Cultural intelligence as original research.</h1>
+            <p class="hero-subheadline">An interdisciplinary framework connecting culture, observation, interaction, and structured meaning.</p>
+            <a href="#framework" class="btn">Review the Framework</a>
+        </div>
+    </section>
+
+    <!-- Framework Section -->
+    <section id="framework">
+        <div class="container">
+            <p class="section-label">What Heyer Livin Is</p>
+            <div class="two-column">
+                <div>
+                    <p style="font-size: 1rem; color: #888888; line-height: 1.8;">Heyer Livin is an original research and system design platform developed to study how meaning is formed, how change becomes legible, and how lived interaction can be recorded in a repeatable way. At its center is a simple but rigorous proposition: Self plus Interaction equals Reality. The self is the prior state. Interaction is the event. Reality is the new information produced by that exchange. From that foundation, the system converts experience into structured cultural memory and usable pattern intelligence.</p>
+                </div>
+                <div>
+                    <div class="card">
+                        <p class="card-label">Core Equation</p>
+                        <p style="font-size: 1.1rem; font-weight: 800; margin-bottom: 1rem;">Self + Interaction = Reality</p>
+                        <p class="card-text">Self is the prior state. Interaction is the event. Reality is the new information.</p>
+                        <p style="font-size: 0.85rem; color: #1a5fb4; margin-top: 1.5rem; font-weight: 700;">One equation. Every domain.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- What Makes It Original -->
+    <section>
+        <div class="container">
+            <p class="section-label">What Makes It Original</p>
+            <h2 class="section-title">Three Core Differentiators</h2>
+            <div class="card-grid-3">
+                <div class="card">
+                    <p class="card-title">Glyph Event Record</p>
+                    <p class="card-text">A standardized event architecture where one record equals one measured event cycle. Each record contains a cycle definition, an irreversible event, derived metrics, routing, snapshot versioning, relations, and notes.</p>
+                </div>
+                <div class="card">
+                    <p class="card-title">Irreversible-Event Logic</p>
+                    <p class="card-text">The system identifies an irreversible state change within a cycle, measures where that change occurs, converts it into a comparable ratio, and stores it in a structured record that can be compared across domains.</p>
+                </div>
+                <div class="card">
+                    <p class="card-title">Cross-Domain Portability</p>
+                    <p class="card-text">The same event logic applies across research, simulations, language, art, and site environments. The framework is not domain-bound. It is a method for converting interaction into structured cultural memory.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Areas of Application -->
+    <section>
+        <div class="container">
+            <p class="section-label">Areas of Application</p>
+            <h2 class="section-title">Where the Framework Works</h2>
+            <div class="card-grid-mixed">
+                <div class="card">
+                    <p class="card-title">Research</p>
+                    <p class="card-text">Original empirical observation recorded as standardized event cycles. The framework converts lived research into repeatable, comparable structure.</p>
+                </div>
+                <div class="card">
+                    <p class="card-title">Education</p>
+                    <p class="card-text">A system for teaching how observation becomes knowledge. Students learn to identify irreversible changes, measure their position, and build comparative frameworks.</p>
+                </div>
+                <div class="card">
+                    <p class="card-title">Design</p>
+                    <p class="card-text">The method applies to interface design, curriculum design, and organizational systems. Any domain where interaction produces measurable change.</p>
+                </div>
+                <div class="card">
+                    <p class="card-title">Language & Art</p>
+                    <p class="card-text">The same logic structures narrative, poetry, visual composition, and creative practice. Interaction with form produces measurable meaning.</p>
+                </div>
+                <div class="card">
+                    <p class="card-title">Site & System Environments</p>
+                    <p class="card-text">Digital and organizational systems where every user action represents an interaction. The framework records and interprets those interactions as structured cultural data.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why It Matters in Academic Contexts -->
+    <section>
+        <div class="container">
+            <p class="section-label">Academic Significance</p>
+            <h2 class="section-title">Why It Matters in Scholarship Review</h2>
+            <div class="text-section">
+                <p>For scholarship review, Heyer Livin demonstrates original thought, interdisciplinary range, and a clear commitment to building new intellectual tools. The work connects culture, cognition, observation, and structured recording in a way that is both intellectually ambitious and practically organized. The value is not in one dataset or one equation but in the larger system architecture and interpretive framework.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Founder Section -->
+    <section>
+        <div class="container">
+            <div class="founder-block">
+                <p class="founder-name">Jair Valley</p>
+                <p class="founder-bio">Berkeley City College student, transfer-track scholar, and founder developing Heyer Livin as an original body of interdisciplinary work at the intersection of culture, research, and system design.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Closing Section -->
+    <section>
+        <div class="container">
+            <div class="closing">
+                <p class="closing-text">This page is a curated introduction to a larger research, design, and systems project.</p>
+                <p class="closing-text">Additional materials and documentation are available upon request.</p>
+                <p class="closing-text">Contact: <a href="mailto:jair@heyerlivin.com" class="contact-link">jair@heyerlivin.com</a></p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 Heyer Livin. All rights reserved.</p>
+            <p><a href="mailto:jair@heyerlivin.com" style="color: #888888; text-decoration: none;">jair@heyerlivin.com</a></p>
+        </div>
+    </footer>
+</body>
+</html>

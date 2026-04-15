@@ -1,0 +1,21 @@
+{
+  "record_id": "gev_8686630c7c6f",
+  "input_values": {
+    "x": 0.55,
+    "y": 0.5
+  },
+  "x": 0.55,
+  "y": 0.5,
+  "r_value": 0.6875,
+  "zone": "DOMINANT",
+  "domain": "design",
+  "timestamp": "2026-04-13T08:50:55Z",
+  "mapping_rule_version": "mapping_v1_assembled",
+  "output_produced": "artifact_release_candidate",
+  "thresholds": {
+    "lower": 0.33,
+    "upper": 0.5,
+    "reference": 0.39
+  },
+  "schema_version": "v1"
+}

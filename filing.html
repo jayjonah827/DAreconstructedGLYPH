@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Provisional Filing â Heyer Livin</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background-color: #0a0a0a;
+            color: #f5f5f5;
+            line-height: 1.6;
+        }
+
+        /* Navigation */
+        nav {
+            position: sticky;
+            top: 0;
+            background-color: #0a0a0a;
+            border-bottom: 1px solid #2e2e2e;
+            z-index: 1000;
+            padding: 1.25rem 2rem;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            align-items: center;
+            gap: 3rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        nav .logo {
+            font-weight: 800;
+            font-size: 1.25rem;
+            letter-spacing: -0.02em;
+            margin-right: auto;
+        }
+
+        nav .logo-heyer {
+            color: #f5f5f5;
+        }
+
+        nav .logo-livin {
+            color: #c9a852;
+        }
+
+        nav a {
+            color: #888888;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+
+        nav a:hover {
+            color: #f5f5f5;
+        }
+
+        nav a.active {
+            color: #c9a852;
+        }
+
+        /* Layout */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 8rem 2rem;
+            text-align: center;
+        }
+
+        .hero-eyebrow {
+            font-size: 0.65rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: #c9a852;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero h1 {
+            font-size: clamp(1.8rem, 4vw, 3rem);
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            color: #f5f5f5;
+        }
+
+        .hero-subtitle {
+            font-size: 1.1rem;
+            color: #888888;
+            max-width: 600px;
+            margin: 0 auto 2.5rem;
+            line-height: 1.6;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background-color: #c9a852;
+            color: #0a0a0a;
+            padding: 0.875rem 2rem;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.95rem;
+            letter-spacing: 0.05em;
+            transition: background-color 0.2s, transform 0.2s;
+            border: none;
+            cursor: pointer;
+            border-radius: 0;
+        }
+
+        .cta-button:hover {
+            background-color: #a68a3a;
+            transform: translateY(-2px);
+        }
+
+        /* Sections */
+        section {
+            padding: 5rem 2rem;
+            border-top: 1px solid #2e2e2e;
+        }
+
+        .section-label {
+            font-size: 0.65rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: #c9a852;
+            margin-bottom: 1rem;
+        }
+
+        .section-title {
+            font-size: clamp(1.8rem, 4vw, 3rem);
+            font-weight: 800;
+            margin-bottom: 2rem;
+            color: #f5f5f5;
+        }
+
+        .section-description {
+            font-size: 1rem;
+            color: #888888;
+            max-width: 700px;
+            margin-bottom: 3rem;
+            line-height: 1.8;
+        }
+
+        /* Card Grid */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .card {
+            background-color: #111111;
+            border-top: 3px solid #c9a852;
+            padding: 2rem;
+            border: 1px solid #2e2e2e;
+            border-top: 3px solid #c9a852;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #f5f5f5;
+            margin-bottom: 1rem;
+        }
+
+        .card-text {
+            font-size: 0.95rem;
+            color: #888888;
+            line-height: 1.7;
+        }
+
+        /* Numbered List */
+        .numbered-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .numbered-item {
+            background-color: #111111;
+            border-top: 3px solid #c9a852;
+            padding: 2rem;
+            border: 1px solid #2e2e2e;
+            border-top: 3px solid #c9a852;
+            counter-increment: item-counter;
+        }
+
+        .numbered-item::before {
+            content: counter(item-counter);
+            display: block;
+            font-size: 2rem;
+            font-weight: 800;
+            color: #c9a852;
+            margin-bottom: 0.75rem;
+        }
+
+        .numbered-item p {
+            font-size: 0.95rem;
+            color: #888888;
+            line-height: 1.7;
+        }
+
+        /* Two Column Section */
+        .two-column {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 3rem;
+            margin-top: 3rem;
+        }
+
+        .two-column-item {
+            background-color: #111111;
+            border-top: 3px solid #c9a852;
+            padding: 2rem;
+            border: 1px solid #2e2e2e;
+            border-top: 3px solid #c9a852;
+        }
+
+        .two-column-item h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #f5f5f5;
+            margin-bottom: 1rem;
+        }
+
+        .two-column-item p {
+            font-size: 0.95rem;
+            color: #888888;
+            line-height: 1.7;
+        }
+
+        /* Positioning Statement */
+        .positioning {
+            background-color: #111111;
+            border: 1px solid #2e2e2e;
+            border-top: 3px solid #c9a852;
+            padding: 3rem;
+            text-align: center;
+            margin-top: 3rem;
+        }
+
+        .positioning p {
+            font-size: clamp(1rem, 2vw, 1.2rem);
+            color: #f5f5f5;
+            line-height: 1.8;
+            font-weight: 500;
+        }
+
+        /* Founder Section */
+        .founder {
+            background-color: #111111;
+            border-top: 2px solid #c9a852;
+            padding: 2rem;
+            text-align: center;
+            margin-top: 4rem;
+        }
+
+        .founder-label {
+            font-size: 0.65rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: #888888;
+            margin-bottom: 0.5rem;
+        }
+
+        .founder-name {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #f5f5f5;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #0a0a0a;
+            border-top: 1px solid #2e2e2e;
+            padding: 2rem;
+            text-align: center;
+            color: #888888;
+            font-size: 0.85rem;
+        }
+
+        footer p {
+            margin: 0.5rem 0;
+        }
+
+        footer a {
+            color: #c9a852;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Counter for Numbered List */
+        .numbered-list {
+            counter-reset: item-counter;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav {
+                padding: 1rem 1.5rem;
+            }
+
+            nav ul {
+                gap: 1.5rem;
+                flex-wrap: wrap;
+            }
+
+            .hero {
+                padding: 4rem 1.5rem;
+            }
+
+            section {
+                padding: 3rem 1.5rem;
+            }
+
+            .container {
+                padding: 0 1.5rem;
+            }
+
+            .positioning {
+                padding: 2rem 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            nav ul {
+                gap: 1rem;
+            }
+
+            nav a {
+                font-size: 0.8rem;
+            }
+
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+
+            section {
+                padding: 2rem 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <ul>
+            <li class="logo">
+                <span class="logo-heyer">Heyer</span>
+                <span class="logo-livin">Livin</span>
+            </li>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="scholarship.html">Scholarship</a></li>
+            <li><a href="filing.html" class="active">Filing</a></li>
+            <li><a href="research.html">Research</a></li>
+            <li><a href="https://heyerlivin.com">Store</a></li>
+        </ul>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-eyebrow">HeyerLivin â Provisional Filing Summary</div>
+        <h1>A novel system architecture for measuring event cycles.</h1>
+        <p class="hero-subtitle">Original methodological framework. Provisional filing candidate. Cross-domain cultural intelligence system.</p>
+        <button class="cta-button" onclick="document.querySelector('#system').scrollIntoView({ behavior: 'smooth' });">Review the System</button>
+    </section>
+
+    <!-- System Architecture Section -->
+    <section id="system">
+        <div class="container">
+            <div class="section-label">The Method</div>
+            <h2 class="section-title">System Architecture</h2>
+            <p class="section-description">Heyer Livin uses a standardized event architecture called a glyph event record. One record equals one measured event cycle. The system does not remain at the level of theory. It implements a repeatable recording, measurement, and comparison process across domains.</p>
+
+            <div class="card-grid">
+                <div class="card">
+                    <div class="card-title">Record Structure</div>
+                    <p class="card-text">Each record contains: a cycle definition, an irreversible event, derived metrics, routing or status, snapshot versioning, relations, and notes.</p>
+                </div>
+                <div class="card">
+                    <div class="card-title">Measurement Logic</div>
+                    <p class="card-text">The system identifies an irreversible state change within a cycle, measures where that change occurs, converts it into a comparable ratio, and stores it in a structured form that can be used across domains.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Core Novel Features Section -->
+    <section>
+        <div class="container">
+            <div class="section-label">Core Capabilities</div>
+            <h2 class="section-title">Core Novel Features</h2>
+
+            <div class="numbered-list">
+                <div class="numbered-item">
+                    <p>Foundational cultural intelligence model rooted in Self + Interaction = Reality</p>
+                </div>
+                <div class="numbered-item">
+                    <p>Standardized glyph event record for consistent, reviewable observation</p>
+                </div>
+                <div class="numbered-item">
+                    <p>Irreversible-event measurement as a novel system concept</p>
+                </div>
+                <div class="numbered-item">
+                    <p>Cross-domain comparability across research, language, art, and design</p>
+                </div>
+                <div class="numbered-item">
+                    <p>Cultural memory as system output, not classification alone</p>
+                </div>
+                <div class="numbered-item">
+                    <p>Method over isolated result: the value is the architecture itself</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why This Qualifies Section -->
+    <section>
+        <div class="container">
+            <div class="section-label">Filing Rationale</div>
+            <h2 class="section-title">Why This Qualifies as a Provisional Filing Candidate</h2>
+
+            <div class="two-column">
+                <div class="two-column-item">
+                    <h3>System Design</h3>
+                    <p>The framework presents a repeatable system design rather than an abstract idea. It includes a standardized record architecture, a measurement method, and a cross-domain comparison framework.</p>
+                </div>
+                <div class="two-column-item">
+                    <h3>Novel Methodology</h3>
+                    <p>The irreversible-event measurement logic and the glyph event record are original contributions not derived from existing frameworks.</p>
+                </div>
+            </div>
+
+            <div class="positioning">
+                <p>A cross-domain cultural intelligence system that translates human interaction, observed change, and symbolic meaning into structured records, usable frameworks, and public-facing knowledge.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Founder Section -->
+    <section>
+        <div class="container">
+            <div class="founder">
+                <div class="founder-label">Founder</div>
+                <div class="founder-name">Jair Valley</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 Heyer Livin LLC. All rights reserved.</p>
+        <p><a href="mailto:jair@heyerlivin.com">jair@heyerlivin.com</a></p>
+    </footer>
+</body>
+</html>
