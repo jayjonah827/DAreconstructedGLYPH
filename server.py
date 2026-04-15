@@ -195,6 +195,41 @@ def layers() -> dict[str, Any]:
     }
 
 
+@app.get("/api/terminal-dashboard")
+def terminal_dashboard_summary() -> dict[str, Any]:
+    event_files = sorted(EVENTS_DIR.glob("gev_*.json"))
+    event_rows: list[dict[str, Any]] = []
+    for path in event_files:
+        event_rows.append(json.loads(path.read_text(encoding="utf-8")))
+
+    domain_counts: dict[str, int] = {}
+    for row in event_rows:
+        domain = str(row.get("domain", "general"))
+        domain_counts[domain] = domain_counts.get(domain, 0) + 1
+
+    data_messages_path = BASE / "data" / "messages.json"
+    message_total = 0
+    if data_messages_path.exists():
+        payload = json.loads(data_messages_path.read_text(encoding="utf-8"))
+        message_total = int(payload.get("total", 0))
+
+    return {
+        "ui": "TerminalDashboard",
+        "entry_point": "/terminal",
+        "events_count": len(event_rows),
+        "domains": domain_counts,
+        "messages_dataset_total": message_total,
+        "layers": {
+            "glyph_engine": "/api/compute",
+            "cultural_compass": "/api/compass",
+            "hieroglyph_archive": "/api/archive",
+            "artifact_generation": "/api/artifact",
+            "community_survey_ingestion": "/api/ingest-survey",
+            "cross_domain_convergence_tracking": "/api/convergence",
+        },
+    }
+
+
 @app.post("/api/run-full-tool")
 async def run_full_tool(request: Request) -> dict[str, Any]:
     payload = await request.json()
@@ -219,12 +254,28 @@ async def run_full_tool(request: Request) -> dict[str, Any]:
     }
 
 
+@app.get("/terminal", response_class=HTMLResponse)
+def terminal_dashboard() -> HTMLResponse:
+    terminal_ui = BASE / "docs_index.html"
+    if terminal_ui.exists():
+        return HTMLResponse(terminal_ui.read_text(encoding="utf-8"))
+    return HTMLResponse("<h1>Terminal Dashboard</h1><p>docs_index.html not found.</p>", status_code=404)
+
+
 @app.get("/", response_class=HTMLResponse)
 def root() -> HTMLResponse:
-    index = BASE / "index.html"
-    if index.exists():
-        return HTMLResponse(index.read_text(encoding="utf-8"))
+    dashboard = BASE / "docs_index.html"
+    if dashboard.exists():
+        return HTMLResponse(dashboard.read_text(encoding="utf-8"))
     return HTMLResponse("<h1>Glyph</h1><p>Engine running.</p>")
+
+
+@app.get("/simulator", response_class=HTMLResponse)
+def simulator() -> HTMLResponse:
+    simulator_ui = BASE / "index.html"
+    if simulator_ui.exists():
+        return HTMLResponse(simulator_ui.read_text(encoding="utf-8"))
+    return HTMLResponse("<h1>Glyph Simulator</h1><p>index.html not found.</p>", status_code=404)
 
 
 @app.get("/{filename:path}")
