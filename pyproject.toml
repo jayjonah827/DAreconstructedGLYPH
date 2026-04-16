@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=75.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "glyph-engine"
+version = "1.0.0"
+description = "Structural constraint engine computing R = x / (x + y²) with zone classification, event storage, and six integrated layers"
+requires-python = ">=3.10"
+license = "MIT"
+dependencies = [
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.32.0",
+]
+
+[project.urls]
+Repository = "https://github.com/jayjonah827/DAreconstructedGLYPH"
+
+[tool.setuptools]
+py-modules = ["server", "glyph_constraint"]
