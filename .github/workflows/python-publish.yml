@@ -26,15 +26,6 @@ jobs:
         with:
           python-version: "3.x"
 
-      - name: Setup Node.js environment
-        uses: actions/setup-node@v6.3.0
-        with:
-          node-version: "20.x"
-
-      - name: Install workflow dependencies
-        run: npm install
-        working-directory: workflows-demo
-
       - name: Build release distributions
         run: |
           # NOTE: put your own distribution build steps here.
