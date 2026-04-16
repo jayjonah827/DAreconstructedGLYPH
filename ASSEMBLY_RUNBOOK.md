@@ -30,7 +30,15 @@ python3 -m uvicorn server:app --host 0.0.0.0 --port 8000
 ## Render Run
 
 - Config file: `render.yaml`
-- Start command: `uvicorn server:app --host 0.0.0.0 --port $PORT`
+- Glyph App (web): `uvicorn server:app --host 0.0.0.0 --port $PORT`
+- Glyph Workflows (worker): `npm start` (root: `workflows-demo/`)
+
+## Workflows (Render Workflows)
+
+- Source: `workflows-demo/src/main.ts`
+- Tasks: `calculateSquare`, `processClaim`
+- Local dev: `cd workflows-demo && render workflows dev -- npm start`
+- Local test: `render workflows tasks start calculateSquare --local --input='[5]'`
 
 ## Existing Pages Assembled
 

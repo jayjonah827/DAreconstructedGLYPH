@@ -5,3 +5,10 @@ services:
     buildCommand: pip install --upgrade pip && pip install -r requirements.txt
     startCommand: uvicorn server:app --host 0.0.0.0 --port $PORT
     healthCheckPath: /health
+
+  - type: worker
+    name: glyph-workflows
+    runtime: node
+    rootDir: workflows-demo
+    buildCommand: npm install
+    startCommand: npm start
