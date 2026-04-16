@@ -1,11 +1,11 @@
 import { task } from "@renderinc/sdk/workflows"
 
-const calculateSquare = task(
+export const calculateSquare = task(
   { name: "calculateSquare" },
   async (n: number) => n * n
 );
 
-const processClaim = task(
+export const processClaim = task(
   {
     name: "processClaim",
     retry: { maxRetries: 3, waitDurationMs: 1000, backoffScaling: 1.5 },

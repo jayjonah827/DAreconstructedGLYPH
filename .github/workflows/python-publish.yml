@@ -30,8 +30,6 @@ jobs:
         uses: actions/setup-node@v6.3.0
         with:
           node-version: "20.x"
-          cache: "npm"
-          cache-dependency-path: workflows-demo/package-lock.json
 
       - name: Install workflow dependencies
         run: npm install
