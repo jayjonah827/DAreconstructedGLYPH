@@ -40,6 +40,13 @@ python3 -m uvicorn server:app --host 0.0.0.0 --port 8000
 - Local dev: `cd workflows-demo && render workflows dev -- npm start`
 - Local test: `render workflows tasks start calculateSquare --local --input='[5]'`
 
+## GitHub Codespaces
+
+- Config: `.devcontainer/devcontainer.json`
+- Base image: Python 3.12 + Node.js 20
+- Auto-installs: `requirements.txt` + `workflows-demo/package-lock.json`
+- Forwarded ports: `8000` (Glyph API), `8787` (Glyph Voice)
+
 ## Existing Pages Assembled
 
 - `index.html`
