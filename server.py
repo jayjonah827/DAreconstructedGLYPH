@@ -41,6 +41,13 @@ def _utc_now_iso() -> str:
     return datetime.now(timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z")
 
 
+def _load_clock_config() -> dict[str, Any]:
+    clock_path = BASE / "site" / "clock.json"
+    if not clock_path.exists():
+        raise HTTPException(status_code=404, detail="site/clock.json not found")
+    return json.loads(clock_path.read_text(encoding="utf-8"))
+
+
 def _build_unified_event(*, x: float, y: float, ratio: float, zone: str, domain: str, output: str | None) -> dict[str, Any]:
     return {
         "record_id": f"gev_{uuid.uuid4().hex[:12]}",
@@ -191,7 +198,33 @@ def layers() -> dict[str, Any]:
             "artifact_generation": "/api/artifact",
             "community_survey_ingestion": "/api/ingest-survey",
             "cross_domain_convergence_tracking": "/api/convergence",
+            "orbital_clock": "/api/clock",
         }
+    }
+
+
+@app.get("/api/clock")
+def orbital_clock() -> dict[str, Any]:
+    now = datetime.now(timezone.utc)
+    seconds = now.second + (now.microsecond / 1_000_000)
+    minutes = now.minute + (seconds / 60)
+    hours = (now.hour % 12) + (minutes / 60)
+    long_angle = (minutes * 6) - 90
+    short_angle = (hours * 30) - 90
+    config = _load_clock_config()
+    return {
+        "schema": "glyph_orbital_clock_state_v1",
+        "generated_at": _utc_now_iso(),
+        "source": "server",
+        "clock": {
+            "short_angle_degrees": round(short_angle, 6),
+            "long_angle_degrees": round(long_angle, 6),
+            "earth_fixed_north": True,
+            "short_hand": config.get("clock", {}).get("short_hand", {}),
+            "long_hand": config.get("clock", {}).get("long_hand", {}),
+        },
+        "route_declarations": config.get("route_declarations", []),
+        "backend": config.get("backend", {}),
     }
 
 
@@ -226,6 +259,7 @@ def terminal_dashboard_summary() -> dict[str, Any]:
             "artifact_generation": "/api/artifact",
             "community_survey_ingestion": "/api/ingest-survey",
             "cross_domain_convergence_tracking": "/api/convergence",
+            "orbital_clock": "/api/clock",
         },
     }
 
@@ -264,10 +298,29 @@ def terminal_dashboard() -> HTMLResponse:
 
 @app.get("/", response_class=HTMLResponse)
 def root() -> HTMLResponse:
+    launch_page = BASE / "site" / "glyph-launch.html"
+    if launch_page.exists():
+        return HTMLResponse(launch_page.read_text(encoding="utf-8"))
     dashboard = BASE / "docs_index.html"
     if dashboard.exists():
         return HTMLResponse(dashboard.read_text(encoding="utf-8"))
     return HTMLResponse("<h1>Glyph</h1><p>Engine running.</p>")
+
+
+@app.get("/launch", response_class=HTMLResponse)
+def launch() -> HTMLResponse:
+    launch_page = BASE / "site" / "glyph-launch.html"
+    if launch_page.exists():
+        return HTMLResponse(launch_page.read_text(encoding="utf-8"))
+    return HTMLResponse("<h1>GLYPH launch page not found.</h1><p>site/glyph-launch.html is missing.</p>", status_code=404)
+
+
+@app.get("/clock.json")
+def clock_json() -> FileResponse:
+    clock_path = BASE / "site" / "clock.json"
+    if clock_path.exists():
+        return FileResponse(clock_path, media_type="application/json")
+    raise HTTPException(status_code=404, detail="site/clock.json not found")
 
 
 @app.get("/simulator", response_class=HTMLResponse)

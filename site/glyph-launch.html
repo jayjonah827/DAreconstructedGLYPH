@@ -1,0 +1,802 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GLYPH / Heyer Livin</title>
+  <meta name="description" content="GLYPH / Heyer Livin first launch orbital clock navigation.">
+  <style>
+    :root {
+      --black: #020205;
+      --panel: rgba(8, 9, 12, 0.58);
+      --line: #f7f7f2;
+      --muted: #a5a7ad;
+      --red: #e22b2b;
+      --yellow: #ffd84a;
+      --glass: rgba(255, 255, 255, 0.065);
+      --glass-line: rgba(255, 255, 255, 0.22);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      background: var(--black);
+      color: var(--line);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      letter-spacing: 0;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 18% 22%, rgba(255, 255, 255, 0.09) 0 1px, transparent 1.8px),
+        radial-gradient(circle at 82% 16%, rgba(255, 255, 255, 0.08) 0 1px, transparent 1.8px),
+        radial-gradient(circle at 64% 72%, rgba(255, 255, 255, 0.07) 0 1px, transparent 1.8px),
+        radial-gradient(circle at 40% 88%, rgba(255, 255, 255, 0.06) 0 1px, transparent 1.8px),
+        linear-gradient(180deg, #05060b 0%, #020205 56%, #000 100%);
+      color: var(--line);
+      overflow-x: hidden;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    .shell {
+      min-height: 100vh;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 18px clamp(18px, 4vw, 44px);
+      border-bottom: 1px solid var(--glass-line);
+      background: rgba(3, 4, 8, 0.62);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 20px 80px rgba(0, 0, 0, 0.38);
+      backdrop-filter: blur(24px) saturate(1.35);
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+
+    .brand {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      text-decoration: none;
+      line-height: 1;
+    }
+
+    .brand strong {
+      font-size: 16px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .brand span {
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 13px;
+      text-transform: uppercase;
+    }
+
+    .live-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 999px;
+      background: var(--yellow);
+      box-shadow: 0 0 16px rgba(255, 216, 74, 0.75);
+    }
+
+    .hero {
+      min-height: calc(100vh - 72px);
+      position: relative;
+      display: grid;
+      place-items: center;
+      padding: clamp(18px, 4vw, 44px);
+      overflow: hidden;
+    }
+
+    .copy {
+      position: absolute;
+      left: clamp(18px, 4vw, 44px);
+      top: clamp(42px, 8vh, 92px);
+      z-index: 6;
+      max-width: min(620px, 74vw);
+    }
+
+    .eyebrow {
+      color: var(--red);
+      font-size: 13px;
+      font-weight: 800;
+      text-transform: uppercase;
+      margin: 0 0 18px;
+    }
+
+    h1 {
+      margin: 0;
+      max-width: 740px;
+      font-size: clamp(46px, 7vw, 104px);
+      line-height: 0.93;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+
+    .subhead {
+      max-width: 590px;
+      color: var(--muted);
+      font-size: clamp(17px, 2vw, 22px);
+      line-height: 1.45;
+      margin: 20px 0 0;
+      text-shadow: 0 2px 30px rgba(0, 0, 0, 0.9);
+    }
+
+    .equation {
+      display: inline-flex;
+      margin-top: 24px;
+      border: 1px solid var(--glass-line);
+      border-radius: 999px;
+      padding: 10px 14px;
+      background: var(--glass);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 18px 80px rgba(0, 0, 0, 0.44);
+      backdrop-filter: blur(18px) saturate(1.45);
+      color: var(--line);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 14px;
+      white-space: nowrap;
+    }
+
+    .orbit-wrap {
+      position: relative;
+      width: 100%;
+      min-height: min(78vw, 820px);
+      display: grid;
+      place-items: center;
+      z-index: 1;
+    }
+
+    svg {
+      width: min(122vw, 1180px);
+      max-height: 86vh;
+      display: block;
+      overflow: visible;
+      filter: drop-shadow(0 52px 90px rgba(0, 0, 0, 0.76));
+    }
+
+    .orbit {
+      fill: none;
+      stroke: rgba(247, 247, 242, 0.28);
+      stroke-width: 1;
+      vector-effect: non-scaling-stroke;
+    }
+
+    .axis {
+      stroke: rgba(247, 247, 242, 0.18);
+      stroke-width: 1;
+      stroke-dasharray: 2 16;
+      vector-effect: non-scaling-stroke;
+    }
+
+    .hand {
+      stroke: rgba(247, 247, 242, 0.5);
+      stroke-linecap: round;
+      transform-origin: 500px 500px;
+      filter: url(#liquid-line);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .short-hand {
+      stroke-width: 1.7;
+    }
+
+    .long-hand {
+      stroke: rgba(226, 43, 43, 0.78);
+      stroke-width: 1.4;
+    }
+
+    .planet {
+      stroke: rgba(255, 255, 255, 0.52);
+      stroke-width: 1.2;
+      filter: url(#planet-shadow);
+    }
+
+    .star {
+      fill: rgba(255, 255, 255, 0.72);
+    }
+
+    .core {
+      fill: url(#core-gradient);
+      stroke: rgba(255, 255, 255, 0.5);
+      stroke-width: 1.6;
+      filter: url(#core-glow);
+    }
+
+    .label {
+      fill: var(--line);
+      font: 700 14px Inter, Arial, sans-serif;
+      text-transform: uppercase;
+    }
+
+    .small-label {
+      fill: var(--muted);
+      font: 700 11px Inter, Arial, sans-serif;
+      text-transform: uppercase;
+    }
+
+    .route-band {
+      border-top: 1px solid var(--glass-line);
+      padding: 28px clamp(18px, 4vw, 44px) 38px;
+      background: rgba(3, 4, 8, 0.72);
+      backdrop-filter: blur(24px) saturate(1.25);
+    }
+
+    .route-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      max-width: 1320px;
+      margin: 0 auto;
+    }
+
+    .route {
+      min-height: 178px;
+      border: 1px solid var(--glass-line);
+      border-radius: 8px;
+      padding: 16px;
+      text-decoration: none;
+      display: grid;
+      gap: 10px;
+      align-content: start;
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.105), rgba(255, 255, 255, 0.028)),
+        rgba(4, 5, 9, 0.7);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 24px 70px rgba(0, 0, 0, 0.42);
+      backdrop-filter: blur(18px) saturate(1.25);
+    }
+
+    .route:focus,
+    .route:hover {
+      border-color: var(--red);
+      outline: none;
+    }
+
+    .route strong {
+      font-size: 18px;
+      text-transform: uppercase;
+    }
+
+    .route span {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+
+    .route code {
+      color: var(--line);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 12px;
+      white-space: normal;
+    }
+
+    .readout {
+      position: absolute;
+      left: 50%;
+      bottom: 4%;
+      transform: translateX(-50%);
+      min-width: min(92vw, 520px);
+      border: 1px solid rgba(247, 247, 242, 0.24);
+      border-radius: 8px;
+      padding: 14px 16px;
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.11), rgba(255, 255, 255, 0.035)),
+        rgba(3, 4, 8, 0.68);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16), 0 24px 74px rgba(0, 0, 0, 0.55);
+      backdrop-filter: blur(22px) saturate(1.4);
+      display: grid;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .readout strong {
+      color: var(--line);
+      font-size: 14px;
+      text-transform: uppercase;
+    }
+
+    .readout-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    @media (max-width: 980px) {
+      .hero {
+        min-height: 920px;
+      }
+
+      .orbit-wrap {
+        min-height: 680px;
+      }
+
+      .route-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 640px) {
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .hero {
+        min-height: 820px;
+        padding-top: 36px;
+      }
+
+      .orbit-wrap {
+        min-height: 520px;
+      }
+
+      .route-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .readout {
+        position: static;
+        transform: none;
+        margin-top: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="GLYPH / Heyer Livin landing">
+        <strong>GLYPH / Heyer Livin</strong>
+        <span>Shape x Role x Mode</span>
+      </a>
+      <div class="status" aria-live="polite"><span class="live-dot" aria-hidden="true"></span><span id="live-status">checking backend</span></div>
+    </header>
+
+    <main class="hero" id="landing" data-route-purpose="Public orbital navigation field" data-data-source="site/clock.json and safe backend GET routes" data-supported-action="Choose launch route">
+      <section class="copy" aria-labelledby="page-title">
+        <p class="eyebrow">Clock / compass / coin / field / generator</p>
+        <h1 id="page-title">First GLYPH launch field</h1>
+        <p class="subhead">Earth stays fixed north. Venus and Jupiter move as the short hand. Four aligned planets move as the long hand. The page reads clock JSON and checks the live GLYPH backend with safe GET calls.</p>
+        <div class="equation">R = x / (x + y^2)</div>
+      </section>
+
+      <section class="orbit-wrap" aria-label="Animated orbital clock">
+        <svg id="clock-svg" viewBox="0 0 1000 1000" role="img" aria-labelledby="clock-title clock-desc">
+          <title id="clock-title">GLYPH orbital clock</title>
+          <desc id="clock-desc">Animated solar-system clock navigation field with Earth fixed north.</desc>
+          <defs>
+            <radialGradient id="core-gradient" cx="38%" cy="34%" r="68%">
+              <stop offset="0%" stop-color="#fff" stop-opacity="0.95"></stop>
+              <stop offset="32%" stop-color="#e22b2b" stop-opacity="0.9"></stop>
+              <stop offset="100%" stop-color="#3a0508" stop-opacity="0.96"></stop>
+            </radialGradient>
+            <radialGradient id="earth-gradient" cx="35%" cy="28%" r="72%">
+              <stop offset="0%" stop-color="#e9fbff"></stop>
+              <stop offset="36%" stop-color="#4b8ec8"></stop>
+              <stop offset="68%" stop-color="#174868"></stop>
+              <stop offset="100%" stop-color="#06111c"></stop>
+            </radialGradient>
+            <radialGradient id="venus-gradient" cx="35%" cy="30%" r="72%">
+              <stop offset="0%" stop-color="#fff3df"></stop>
+              <stop offset="45%" stop-color="#b98f68"></stop>
+              <stop offset="100%" stop-color="#382818"></stop>
+            </radialGradient>
+            <radialGradient id="jupiter-gradient" cx="35%" cy="30%" r="76%">
+              <stop offset="0%" stop-color="#fff7ec"></stop>
+              <stop offset="36%" stop-color="#b98d73"></stop>
+              <stop offset="66%" stop-color="#6f4c45"></stop>
+              <stop offset="100%" stop-color="#1e1314"></stop>
+            </radialGradient>
+            <radialGradient id="mercury-gradient" cx="35%" cy="30%" r="70%">
+              <stop offset="0%" stop-color="#f5f6f2"></stop>
+              <stop offset="46%" stop-color="#777b7c"></stop>
+              <stop offset="100%" stop-color="#151718"></stop>
+            </radialGradient>
+            <radialGradient id="mars-gradient" cx="35%" cy="30%" r="72%">
+              <stop offset="0%" stop-color="#ffd8cc"></stop>
+              <stop offset="45%" stop-color="#b64232"></stop>
+              <stop offset="100%" stop-color="#2d0808"></stop>
+            </radialGradient>
+            <radialGradient id="saturn-gradient" cx="35%" cy="30%" r="78%">
+              <stop offset="0%" stop-color="#f7eee2"></stop>
+              <stop offset="46%" stop-color="#a58f78"></stop>
+              <stop offset="100%" stop-color="#2a211c"></stop>
+            </radialGradient>
+            <radialGradient id="neptune-gradient" cx="35%" cy="30%" r="74%">
+              <stop offset="0%" stop-color="#dce9ff"></stop>
+              <stop offset="44%" stop-color="#4169b2"></stop>
+              <stop offset="100%" stop-color="#0a1538"></stop>
+            </radialGradient>
+            <filter id="planet-shadow" x="-80%" y="-80%" width="260%" height="260%">
+              <feDropShadow dx="0" dy="14" stdDeviation="14" flood-color="#000" flood-opacity="0.72"></feDropShadow>
+              <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" seed="27" result="noise"></feTurbulence>
+              <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.2"></feDisplacementMap>
+            </filter>
+            <filter id="core-glow" x="-120%" y="-120%" width="340%" height="340%">
+              <feGaussianBlur stdDeviation="18" result="blur"></feGaussianBlur>
+              <feMerge>
+                <feMergeNode in="blur"></feMergeNode>
+                <feMergeNode in="SourceGraphic"></feMergeNode>
+              </feMerge>
+            </filter>
+            <filter id="liquid-line" x="-30%" y="-30%" width="160%" height="160%">
+              <feTurbulence type="fractalNoise" baseFrequency="0.02 0.08" numOctaves="2" seed="9" result="wave"></feTurbulence>
+              <feDisplacementMap in="SourceGraphic" in2="wave" scale="2.2"></feDisplacementMap>
+            </filter>
+          </defs>
+          <g class="starfield">
+            <circle class="star" cx="96" cy="150" r="1.1"></circle>
+            <circle class="star" cx="205" cy="72" r="0.8"></circle>
+            <circle class="star" cx="318" cy="136" r="1"></circle>
+            <circle class="star" cx="756" cy="84" r="1"></circle>
+            <circle class="star" cx="905" cy="182" r="0.9"></circle>
+            <circle class="star" cx="850" cy="760" r="1"></circle>
+            <circle class="star" cx="168" cy="790" r="0.8"></circle>
+            <circle class="star" cx="90" cy="548" r="0.8"></circle>
+            <circle class="star" cx="934" cy="508" r="1.1"></circle>
+          </g>
+          <ellipse class="orbit" cx="500" cy="500" rx="82" ry="45"></ellipse>
+          <ellipse class="orbit" cx="500" cy="500" rx="132" ry="72"></ellipse>
+          <ellipse class="orbit" cx="500" cy="500" rx="210" ry="114"></ellipse>
+          <ellipse class="orbit" cx="500" cy="500" rx="286" ry="155"></ellipse>
+          <ellipse class="orbit" cx="500" cy="500" rx="342" ry="185"></ellipse>
+          <ellipse class="orbit" cx="500" cy="500" rx="404" ry="219"></ellipse>
+          <ellipse class="orbit" cx="500" cy="500" rx="466" ry="253"></ellipse>
+          <line class="axis" x1="500" y1="252" x2="500" y2="748"></line>
+          <line class="axis" x1="34" y1="500" x2="966" y2="500"></line>
+          <line id="long-hand" class="hand long-hand" x1="500" y1="500" x2="500" y2="247"></line>
+          <line id="short-hand" class="hand short-hand" x1="500" y1="500" x2="500" y2="386"></line>
+          <circle class="core" cx="500" cy="500" r="36"></circle>
+          <text class="label" x="500" y="566" text-anchor="middle">GLYPH</text>
+          <text class="small-label" x="500" y="238" text-anchor="middle">North / Earth fixed</text>
+          <g id="planet-layer"></g>
+        </svg>
+
+        <div class="readout">
+          <strong id="phase-label">CLOCK PHASE</strong>
+          <div class="readout-row"><span>Short hand</span><span id="short-readout">Venus / Jupiter</span></div>
+          <div class="readout-row"><span>Long hand</span><span id="long-readout">four aligned planets</span></div>
+          <div class="readout-row"><span>Backend</span><span id="backend-readout">UNKNOWN</span></div>
+        </div>
+      </section>
+    </main>
+
+    <section class="route-band" aria-label="Launch routes">
+      <div class="route-grid" id="routes"></div>
+    </section>
+  </div>
+
+  <script>
+    const FALLBACK_CONFIG = {
+      backend: {
+        authority: "https://eightglyphs27.onrender.com",
+        health: "/api/health",
+        layers: "/api/layers",
+        clock: "/api/clock",
+        archive: "/api/archive",
+        convergence: "/api/convergence"
+      },
+      route_declarations: [
+        {
+          id: "landing",
+          label: "Landing",
+          href: "/",
+          purpose: "Public orbital navigation field for the first GLYPH launch.",
+          data_source: "/api/clock with site/clock.json fallback.",
+          supported_action: "Read launch status and choose a launch route."
+        },
+        {
+          id: "about",
+          label: "About",
+          href: "/site/story.html",
+          purpose: "Public story and system context for Heyer Livin / GLYPH.",
+          data_source: "Existing site/story.html launch surface.",
+          supported_action: "Read the public system story."
+        },
+        {
+          id: "shop",
+          label: "Shop",
+          href: "https://heyerlivin.shop",
+          purpose: "Commerce layer for reachable Heyer Livin products.",
+          data_source: "Live heyerlivin.shop commerce surface.",
+          supported_action: "Open product and cart routes."
+        },
+        {
+          id: "glyph-engine",
+          label: "Glyph Engine",
+          href: "/simulator",
+          purpose: "Interactive GLYPH engine surface for R = x / (x + y^2).",
+          data_source: "Render backend and existing simulator route.",
+          supported_action: "Open the engine interface."
+        }
+      ],
+      clock: {
+        earth: { angle_degrees: -90, radius: 286 },
+        short_hand: { planets: ["Venus", "Jupiter"], radii: [132, 210] },
+        long_hand: { planets: ["Mercury", "Mars", "Saturn", "Neptune"], radii: [82, 342, 404, 466] }
+      }
+    };
+
+    const CENTER = { x: 500, y: 500 };
+    const ORBIT_Y_SCALE = 0.543;
+    const planetLayer = document.getElementById("planet-layer");
+    const shortHand = document.getElementById("short-hand");
+    const longHand = document.getElementById("long-hand");
+    const phaseLabel = document.getElementById("phase-label");
+    const shortReadout = document.getElementById("short-readout");
+    const longReadout = document.getElementById("long-readout");
+    const backendReadout = document.getElementById("backend-readout");
+    const liveStatus = document.getElementById("live-status");
+    const routes = document.getElementById("routes");
+    let clockConfig = FALLBACK_CONFIG;
+    let clockAuthority = null;
+    let planetEls = [];
+
+    function polar(radius, degrees) {
+      const radians = degrees * Math.PI / 180;
+      return {
+        x: CENTER.x + Math.cos(radians) * radius,
+        y: CENTER.y + Math.sin(radians) * radius * ORBIT_Y_SCALE
+      };
+    }
+
+    function planetPaint(name) {
+      const key = String(name).toLowerCase();
+      if (key === "earth") return "url(#earth-gradient)";
+      if (key === "venus") return "url(#venus-gradient)";
+      if (key === "jupiter") return "url(#jupiter-gradient)";
+      if (key === "mercury") return "url(#mercury-gradient)";
+      if (key === "mars") return "url(#mars-gradient)";
+      if (key === "saturn") return "url(#saturn-gradient)";
+      if (key === "neptune") return "url(#neptune-gradient)";
+      return "#f7f7f2";
+    }
+
+    function applyClockPayload(payload) {
+      const sourceClock = payload.clock || {};
+      clockConfig = {
+        ...FALLBACK_CONFIG,
+        ...payload,
+        backend: {
+          ...FALLBACK_CONFIG.backend,
+          ...(payload.backend || {})
+        },
+        route_declarations: payload.route_declarations || FALLBACK_CONFIG.route_declarations,
+        clock: {
+          ...FALLBACK_CONFIG.clock,
+          ...sourceClock,
+          earth: {
+            ...FALLBACK_CONFIG.clock.earth,
+            ...(sourceClock.earth || {})
+          },
+          short_hand: {
+            ...FALLBACK_CONFIG.clock.short_hand,
+            ...(sourceClock.short_hand || {})
+          },
+          long_hand: {
+            ...FALLBACK_CONFIG.clock.long_hand,
+            ...(sourceClock.long_hand || {})
+          }
+        }
+      };
+
+      const shortAngle = Number(sourceClock.short_angle_degrees);
+      const longAngle = Number(sourceClock.long_angle_degrees);
+      if (payload.source === "server" && Number.isFinite(shortAngle) && Number.isFinite(longAngle)) {
+        clockAuthority = {
+          receivedAt: performance.now(),
+          shortAngle,
+          longAngle
+        };
+      }
+    }
+
+    async function loadClockConfig() {
+      const urls = ["/api/clock", "api/clock", "clock.json", "/clock.json", "site/clock.json", "/site/clock.json"];
+      for (const url of urls) {
+        try {
+          const response = await fetch(url, { cache: "no-store" });
+          if (response.ok) {
+            const payload = await response.json();
+            applyClockPayload(payload);
+            return;
+          }
+        } catch (error) {
+          // Keep fallback config.
+        }
+      }
+    }
+
+    function makeSvg(tag, attrs) {
+      const el = document.createElementNS("http://www.w3.org/2000/svg", tag);
+      Object.entries(attrs).forEach(([key, value]) => el.setAttribute(key, value));
+      return el;
+    }
+
+    function buildPlanets() {
+      planetLayer.replaceChildren();
+      planetEls = [];
+
+      const earth = clockConfig.clock.earth || FALLBACK_CONFIG.clock.earth;
+      const earthPoint = polar(earth.radius || 286, earth.angle_degrees || -90);
+      const earthDot = makeSvg("circle", {
+        class: "planet",
+        cx: earthPoint.x,
+        cy: earthPoint.y,
+        r: 22,
+        fill: planetPaint("Earth")
+      });
+      const earthLabel = makeSvg("text", {
+        class: "small-label",
+        x: earthPoint.x + 20,
+        y: earthPoint.y + 4
+      });
+      earthLabel.textContent = "Earth";
+      planetLayer.append(earthDot, earthLabel);
+
+      const shortHandConfig = clockConfig.clock.short_hand || FALLBACK_CONFIG.clock.short_hand;
+      const longHandConfig = clockConfig.clock.long_hand || FALLBACK_CONFIG.clock.long_hand;
+      shortHandConfig.planets.forEach((name, index) => {
+        const dot = makeSvg("circle", { class: "planet", cx: 500, cy: 500, r: index === 0 ? 13 : 22, fill: planetPaint(name) });
+        const label = makeSvg("text", { class: "small-label", x: 500, y: 500 });
+        label.textContent = name;
+        planetLayer.append(dot, label);
+        planetEls.push({ dot, label, radius: shortHandConfig.radii[index], hand: "short" });
+      });
+
+      longHandConfig.planets.forEach((name, index) => {
+        const dot = makeSvg("circle", { class: "planet", cx: 500, cy: 500, r: index === 0 ? 8 : 14, fill: planetPaint(name) });
+        const label = makeSvg("text", { class: "small-label", x: 500, y: 500 });
+        label.textContent = name;
+        planetLayer.append(dot, label);
+        planetEls.push({ dot, label, radius: longHandConfig.radii[index], hand: "long" });
+      });
+    }
+
+    function renderRoutes() {
+      const declarations = clockConfig.route_declarations || FALLBACK_CONFIG.route_declarations;
+      routes.replaceChildren();
+      declarations.forEach((route) => {
+        const a = document.createElement("a");
+        a.className = "route";
+        a.href = route.href;
+        a.dataset.routePurpose = route.purpose;
+        a.dataset.dataSource = route.data_source;
+        a.dataset.supportedAction = route.supported_action;
+        if (route.href.startsWith("http")) {
+          a.target = "_blank";
+          a.rel = "noreferrer";
+        }
+        a.innerHTML = "<strong></strong><span></span><span></span><code></code>";
+        a.children[0].textContent = route.label;
+        a.children[1].textContent = route.purpose;
+        a.children[2].textContent = route.supported_action;
+        a.children[3].textContent = route.data_source;
+        routes.appendChild(a);
+      });
+    }
+
+    function setLine(line, radius, degrees) {
+      const point = polar(radius, degrees);
+      line.setAttribute("x1", CENTER.x);
+      line.setAttribute("y1", CENTER.y);
+      line.setAttribute("x2", point.x);
+      line.setAttribute("y2", point.y);
+    }
+
+    function readClockAngles() {
+      const now = new Date();
+      if (clockAuthority) {
+        const elapsedSeconds = Math.max(0, (performance.now() - clockAuthority.receivedAt) / 1000);
+        return {
+          now,
+          longAngle: clockAuthority.longAngle + elapsedSeconds * 0.1,
+          shortAngle: clockAuthority.shortAngle + elapsedSeconds / 120,
+          label: `SERVER CLOCK ${now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" })}`
+        };
+      }
+
+      const seconds = now.getSeconds() + now.getMilliseconds() / 1000;
+      const minutes = now.getMinutes() + seconds / 60;
+      const hours = (now.getHours() % 12) + minutes / 60;
+      return {
+        now,
+        longAngle: minutes * 6 - 90,
+        shortAngle: hours * 30 - 90,
+        label: now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" })
+      };
+    }
+
+    function animateClock() {
+      const clockState = readClockAngles();
+      const longAngle = clockState.longAngle;
+      const shortAngle = clockState.shortAngle;
+
+      setLine(shortHand, 210, shortAngle);
+      setLine(longHand, 466, longAngle);
+
+      planetEls.forEach((planet) => {
+        const angle = planet.hand === "short" ? shortAngle : longAngle;
+        const point = polar(planet.radius, angle);
+        planet.dot.setAttribute("cx", point.x);
+        planet.dot.setAttribute("cy", point.y);
+        planet.label.setAttribute("x", point.x + 14);
+        planet.label.setAttribute("y", point.y + 4);
+      });
+
+      phaseLabel.textContent = clockState.label;
+      requestAnimationFrame(animateClock);
+    }
+
+    function endpoint(path) {
+      const authority = (clockConfig.backend && clockConfig.backend.authority) || FALLBACK_CONFIG.backend.authority;
+      const sameOriginHosts = ["eightglyphs27.onrender.com", "heyerlivin.com", "www.heyerlivin.com", "127.0.0.1", "localhost"];
+      if (window.location.protocol.startsWith("http") && sameOriginHosts.includes(window.location.hostname)) {
+        return path;
+      }
+      return authority.replace(/\/$/, "") + path;
+    }
+
+    async function checkBackend() {
+      const backend = clockConfig.backend || FALLBACK_CONFIG.backend;
+      const checks = [backend.health, backend.layers, backend.clock, backend.archive, backend.convergence].filter(Boolean);
+      let ok = 0;
+      for (const path of checks) {
+        try {
+          const response = await fetch(endpoint(path), { cache: "no-store" });
+          if (response.ok) ok += 1;
+        } catch (error) {
+          // Readout stays evidence-based.
+        }
+      }
+      if (ok === checks.length && checks.length > 0) {
+        liveStatus.textContent = "backend live";
+        backendReadout.textContent = "LIVE";
+      } else if (ok > 0) {
+        liveStatus.textContent = "backend partial";
+        backendReadout.textContent = "PARTIAL";
+      } else {
+        liveStatus.textContent = "backend unknown";
+        backendReadout.textContent = "UNKNOWN";
+      }
+    }
+
+    async function boot() {
+      await loadClockConfig();
+      buildPlanets();
+      renderRoutes();
+      shortReadout.textContent = (clockConfig.clock.short_hand.planets || []).join(" / ");
+      longReadout.textContent = (clockConfig.clock.long_hand.planets || []).join(" / ");
+      checkBackend();
+      requestAnimationFrame(animateClock);
+    }
+
+    boot();
+  </script>
+</body>
+</html>

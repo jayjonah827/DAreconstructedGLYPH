@@ -1,0 +1,77 @@
+{
+  "schema": "glyph_orbital_clock_v1",
+  "generated_at": "2026-05-07",
+  "system": "GLYPH / Heyer Livin",
+  "backend": {
+    "authority": "https://eightglyphs27.onrender.com",
+    "safe_get_only": true,
+    "health": "/api/health",
+    "layers": "/api/layers",
+    "clock": "/api/clock",
+    "archive": "/api/archive",
+    "convergence": "/api/convergence"
+  },
+  "route_declarations": [
+    {
+      "id": "landing",
+      "label": "Landing",
+      "href": "/",
+      "purpose": "Public orbital navigation field for the first GLYPH launch.",
+      "data_source": "/api/clock with site/clock.json fallback.",
+      "supported_action": "Read launch status and choose a launch route."
+    },
+    {
+      "id": "about",
+      "label": "About",
+      "href": "/site/story.html",
+      "purpose": "Public story and system context for Heyer Livin / GLYPH.",
+      "data_source": "Existing site/story.html launch surface.",
+      "supported_action": "Read the public system story."
+    },
+    {
+      "id": "shop",
+      "label": "Shop",
+      "href": "https://heyerlivin.shop",
+      "purpose": "Commerce layer for reachable Heyer Livin products.",
+      "data_source": "Live heyerlivin.shop commerce surface.",
+      "supported_action": "Open product and cart routes."
+    },
+    {
+      "id": "glyph-engine",
+      "label": "Glyph Engine",
+      "href": "/simulator",
+      "purpose": "Interactive GLYPH engine surface for R = x / (x + y^2).",
+      "data_source": "Render backend and existing simulator route.",
+      "supported_action": "Open the engine interface."
+    }
+  ],
+  "clock": {
+    "center_label": "GLYPH",
+    "earth": {
+      "fixed_north": true,
+      "angle_degrees": -90,
+      "radius": 286,
+      "role": "fixed north"
+    },
+    "short_hand": {
+      "planets": ["Venus", "Jupiter"],
+      "period": "12h",
+      "role": "clock short hand",
+      "radii": [132, 210]
+    },
+    "long_hand": {
+      "planets": ["Mercury", "Mars", "Saturn", "Neptune"],
+      "period": "60m",
+      "role": "clock long hand",
+      "radii": [82, 342, 404, 466]
+    },
+    "states": {
+      "subordinated": "R < 0.33",
+      "structural": "0.33 <= R <= 0.50",
+      "dominant": "R > 0.50"
+    },
+    "constraint": "R = x / (x + y^2)",
+    "outer_field_scored": false,
+    "ultimate_hierarchy": false
+  }
+}
