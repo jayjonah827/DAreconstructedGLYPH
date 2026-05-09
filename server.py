@@ -298,6 +298,9 @@ def terminal_dashboard() -> HTMLResponse:
 
 @app.get("/", response_class=HTMLResponse)
 def root() -> HTMLResponse:
+    heyer_livin_home = BASE / "heyer-livin-site" / "index.html"
+    if heyer_livin_home.exists():
+        return HTMLResponse(heyer_livin_home.read_text(encoding="utf-8"))
     launch_page = BASE / "site" / "glyph-launch.html"
     if launch_page.exists():
         return HTMLResponse(launch_page.read_text(encoding="utf-8"))
