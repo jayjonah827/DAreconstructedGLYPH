@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
+
+cd "$REPO_ROOT"
+export GLYPH_RUNTIME_ROOT="$REPO_ROOT"
+export PYTHONPATH="$REPO_ROOT/python_engine${PYTHONPATH:+:$PYTHONPATH}"
+export PYTHONDONTWRITEBYTECODE=1
+
+exec python3 -B -m glyph_terminal "$@"

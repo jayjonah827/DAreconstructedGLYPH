@@ -1,0 +1,157 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+LABEL="com.heyerlivin.glyph.voice"
+PORT="8788"
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
+DOMAIN="gui/$(id -u)"
+PLIST="$HOME/Library/LaunchAgents/$LABEL.plist"
+PYTHON_BIN="${PYTHON_BIN:-$(command -v python3)}"
+
+usage() {
+  cat <<USAGE
+Usage: glyph-service {install|start|stop|restart|status|uninstall|plist}
+
+Installs and controls the local Glyph voice service on localhost:$PORT.
+USAGE
+}
+
+ensure_dirs() {
+  mkdir -p "$HOME/Library/LaunchAgents" "$REPO_ROOT/runtime" "$REPO_ROOT/reports/cloud_handoff"
+}
+
+write_plist() {
+  ensure_dirs
+  cat > "$PLIST" <<PLIST
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+  "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>$LABEL</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>$PYTHON_BIN</string>
+    <string>-B</string>
+    <string>-m</string>
+    <string>glyph_voice</string>
+  </array>
+  <key>WorkingDirectory</key>
+  <string>$REPO_ROOT</string>
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>GLYPH_RUNTIME_ROOT</key>
+    <string>$REPO_ROOT</string>
+    <key>GLYPH_VOICE_LOG_PATH</key>
+    <string>$REPO_ROOT/runtime/glyph_voice.log</string>
+    <key>PYTHONPATH</key>
+    <string>$REPO_ROOT/python_engine</string>
+    <key>PYTHONDONTWRITEBYTECODE</key>
+    <string>1</string>
+  </dict>
+  <key>RunAtLoad</key>
+  <true/>
+  <key>KeepAlive</key>
+  <true/>
+  <key>StandardOutPath</key>
+  <string>/private/tmp/glyph_voice.launchd.out.log</string>
+  <key>StandardErrorPath</key>
+  <string>/private/tmp/glyph_voice.launchd.err.log</string>
+</dict>
+</plist>
+PLIST
+  plutil -lint "$PLIST" >/dev/null
+}
+
+bootout_if_loaded() {
+  launchctl bootout "$DOMAIN" "$PLIST" >/dev/null 2>&1 || true
+}
+
+kill_existing_glyph_listener() {
+  local pids pid command
+  pids="$(lsof -tiTCP:"$PORT" -sTCP:LISTEN 2>/dev/null || true)"
+  for pid in $pids; do
+    command="$(ps -p "$pid" -o command= 2>/dev/null || true)"
+    case "$command" in
+      *glyph_voice*|*"$REPO_ROOT/python_engine"*)
+        kill "$pid" 2>/dev/null || true
+        ;;
+    esac
+  done
+}
+
+start_service() {
+  write_plist
+  kill_existing_glyph_listener
+  launchctl bootstrap "$DOMAIN" "$PLIST" 2>/dev/null || true
+  launchctl enable "$DOMAIN/$LABEL" 2>/dev/null || true
+  launchctl kickstart -k "$DOMAIN/$LABEL"
+}
+
+stop_service() {
+  bootout_if_loaded
+  kill_existing_glyph_listener
+}
+
+status_service() {
+  echo "label=$LABEL"
+  echo "plist=$PLIST"
+  if launchctl print "$DOMAIN/$LABEL" >/dev/null 2>&1; then
+    echo "launchd=loaded"
+  else
+    echo "launchd=not_loaded"
+  fi
+  if lsof -nP -iTCP:"$PORT" -sTCP:LISTEN >/dev/null 2>&1; then
+    echo "port_$PORT=listening"
+  else
+    echo "port_$PORT=not_listening"
+  fi
+  if curl -fsS --max-time 2 "http://127.0.0.1:$PORT/services.json" >/dev/null 2>&1; then
+    echo "http=ok"
+  else
+    echo "http=not_ok"
+  fi
+  if [[ -f "$REPO_ROOT/reports/cloud_handoff/glyph_voice_status.json" ]]; then
+    echo "handoff=present"
+  else
+    echo "handoff=missing"
+  fi
+}
+
+case "${1:-}" in
+  install)
+    write_plist
+    start_service
+    status_service
+    ;;
+  start)
+    start_service
+    status_service
+    ;;
+  stop)
+    stop_service
+    status_service
+    ;;
+  restart)
+    stop_service
+    start_service
+    status_service
+    ;;
+  status)
+    status_service
+    ;;
+  uninstall)
+    stop_service
+    rm -f "$PLIST"
+    status_service
+    ;;
+  plist)
+    write_plist
+    echo "$PLIST"
+    ;;
+  *)
+    usage
+    exit 2
+    ;;
+esac

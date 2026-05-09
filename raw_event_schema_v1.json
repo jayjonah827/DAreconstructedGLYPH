@@ -1,0 +1,51 @@
+{
+  "$schema_version": "v1",
+  "schema_name": "raw_source_capture_record",
+  "description": "Append-only raw source record preserved before segmentation, normalization, computation, or interpretation.",
+  "required_fields": [
+    "record_id",
+    "source_id",
+    "speaker",
+    "branch",
+    "event_kind",
+    "raw",
+    "raw_sha256",
+    "raw_byte_count",
+    "timestamp",
+    "authority_level",
+    "status",
+    "action",
+    "schema_version"
+  ],
+  "field_types": {
+    "record_id": "str",
+    "source_id": "str",
+    "speaker": "str",
+    "branch": "str",
+    "event_kind": "str",
+    "raw": ["str", "null"],
+    "raw_sha256": "str",
+    "raw_byte_count": "int",
+    "timestamp": "str",
+    "authority_level": "str",
+    "status": "str",
+    "action": "str",
+    "schema_version": "str"
+  },
+  "allowed_branches": [
+    "observed",
+    "transcript",
+    "model_output",
+    "metadata",
+    "glyph_identity",
+    "absence",
+    "action",
+    "raw_source_capture"
+  ],
+  "immutable_fields": [
+    "raw",
+    "raw_sha256",
+    "raw_byte_count"
+  ],
+  "core_rule": "Preserve raw first, segment second, compute third."
+}

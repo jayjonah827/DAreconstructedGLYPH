@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
+
+cd "$REPO_ROOT"
+export GLYPH_CANONICAL_REPO_ROOT="$REPO_ROOT"
+export GLYPH_CANONICAL_WORKSPACE_DOC="$REPO_ROOT/CANONICAL_WORKSPACE.md"
+export GLYPH_ENTRYPOINT_APPROVED=1
+export GLYPH_ENTRYPOINT_NAME="bin/glyph-audit-summary"
+exec python3 -m controller.main --repo-root "$REPO_ROOT" --audit-summary "$@"

@@ -6,3 +6,13 @@ dist/
 build/
 .env
 .DS_Store
+
+# Local runtime state and raw/private ledgers stay on the SSD.
+runtime/
+events_raw/*.jsonl
+reports/cloud_handoff/
+reports/disc/
+
+# Generated handwriting/font extraction assets are source corpus artifacts,
+# not application runtime code.
+python_engine/font_pipeline/handwriting_overlay/

@@ -1,0 +1,56 @@
+{
+  "event_id": "hl-2026-05-07-ebook-ai-agents-4daculture-v1",
+  "timestamp_utc": "2026-05-07T20:25:00Z",
+  "actor": "Jonah / Heyer Livin'",
+  "action": "artifact_created",
+  "artifact": {
+    "type": "ebook",
+    "format": "docx",
+    "filename": "AI_Agents_4daCulture.docx",
+    "title": "AI AGENTS 4daCulture — A Heyer Livin' Field Guide",
+    "byte_size": 58185,
+    "paragraph_count": 959,
+    "block_count": 878,
+    "validation": "PASSED",
+    "destination_on_mac": "/Users/jayjonah/Documents/Claude/Projects/ai-agents-ebook/AI_Agents_4daCulture.docx"
+  },
+  "source": {
+    "curriculum": "Liam Ottley — AI Agents (Foundations + 4 Builds + Monetization), ~3.5hr YouTube course",
+    "translation_voice": "Heyer Livin' / 4daCulture",
+    "attribution_handled_in": "Preface + Receipts section"
+  },
+  "structure": {
+    "front_matter": ["Cover", "Dedication", "TOC", "Preface", "How to read this book"],
+    "part_1_foundations": "Chapters 1-9 + checkpoint",
+    "part_2_building": "Chapters 10-13 (Sales co-pilot, Lead-qual automation, Voice/web support agent, WhatsApp lead-gen) + checkpoint",
+    "part_3_getting_paid": "Chapters 14-17 (Opportunity, 3 ways to win, First clients, Your move)",
+    "back_matter": ["Cipher Index (glossary)", "Receipts (links/contact)", "Closing word"]
+  },
+  "callout_legend": {
+    "real_talk": "tip / plain-spoken truth",
+    "cipher": "vocab definition",
+    "hands_dirty": "exercise / try this",
+    "4daculture": "why this matters for us specifically",
+    "heads_up": "warning",
+    "stick_a_pin": "remember this"
+  },
+  "monetization_pathways": [
+    "Substack lead magnet (free chapter 1-3 → paid full)",
+    "Gumroad direct sale ($15-25 PDF)",
+    "Skool/community course companion",
+    "AI Education vertical of Heyerlivin LLC consulting offer"
+  ],
+  "next_actions_for_jonah": [
+    "Review the docx for voice/tone — adjust any chapter that feels off",
+    "Convert to PDF (LibreOffice: `soffice --headless --convert-to pdf AI_Agents_4daCulture.docx`)",
+    "Add cover image (Heyer Livin' generational seal) before final PDF export",
+    "Decide pricing tier and platform (Gumroad vs Substack paid vs Skool)",
+    "Append this ledger_event.json to ~/Documents/Claude/ledger.jsonl on materialization"
+  ],
+  "compliance": {
+    "skill_invoked": "hl-automation-translator",
+    "tracked_artifact": true,
+    "runtime_mode": "EXECUTE (sandbox→outputs handoff)",
+    "ledger_handoff_required": "Append this event to ~/Documents/Claude/ledger.jsonl on Mac"
+  }
+}

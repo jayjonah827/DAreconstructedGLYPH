@@ -1,0 +1,41 @@
+{
+  "$schema_version": "v1",
+  "schema_name": "absence_record",
+  "description": "Record for empty, missing, unavailable, placeholder-only, or external-tool-required states.",
+  "required_fields": [
+    "record_id",
+    "source_id",
+    "branch",
+    "event_kind",
+    "source_path",
+    "observed_state",
+    "meaning",
+    "next_action",
+    "timestamp",
+    "status",
+    "schema_version"
+  ],
+  "field_types": {
+    "record_id": "str",
+    "source_id": "str",
+    "branch": "str",
+    "event_kind": "str",
+    "source_path": "str",
+    "observed_state": "str",
+    "meaning": "str",
+    "next_action": "str",
+    "timestamp": "str",
+    "status": "str",
+    "schema_version": "str"
+  },
+  "allowed_observed_states": [
+    "empty",
+    "missing",
+    "unreadable",
+    "cloud_placeholder_only",
+    "external_tool_required",
+    "unsupported_operation",
+    "not_available"
+  ],
+  "core_rule": "Absence is recorded as an event, not ignored as nothing."
+}

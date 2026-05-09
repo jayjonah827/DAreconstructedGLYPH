@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd -P)"
+
+osascript -e 'tell application "Terminal" to activate' \
+  -e "tell application \"Terminal\" to do script \"cd '$REPO_ROOT' && ./bin/glyph-chat\""

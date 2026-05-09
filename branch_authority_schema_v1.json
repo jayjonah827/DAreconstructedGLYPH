@@ -1,0 +1,62 @@
+{
+  "$schema_version": "v1",
+  "schema_name": "branch_authority_record",
+  "description": "Derived branch record linked to a raw source capture or another branch record.",
+  "required_fields": [
+    "record_id",
+    "source_id",
+    "speaker",
+    "branch",
+    "event_kind",
+    "raw",
+    "normalized",
+    "glyph_tags",
+    "relation_to",
+    "authority_level",
+    "status",
+    "action",
+    "timestamp",
+    "schema_version"
+  ],
+  "field_types": {
+    "record_id": "str",
+    "source_id": "str",
+    "speaker": "str",
+    "branch": "str",
+    "event_kind": "str",
+    "raw": ["str", "null"],
+    "normalized": ["str", "null"],
+    "glyph_tags": "list",
+    "relation_to": "list",
+    "authority_level": "str",
+    "status": "str",
+    "action": "str",
+    "timestamp": "str",
+    "schema_version": "str"
+  },
+  "allowed_branches": [
+    "observed",
+    "transcript",
+    "model_output",
+    "metadata",
+    "metadata_branch",
+    "observed_file",
+    "glyph_identity",
+    "absence",
+    "duplicate_candidate",
+    "action",
+    "branch_link",
+    "derived_segment"
+  ],
+  "restricted_operations": [
+    "declare_canon",
+    "resolve_contradiction",
+    "delete_files",
+    "decide_source_truth",
+    "infer_missing_authority",
+    "flatten_historical_meaning",
+    "convert_structural_constraint_into_preference",
+    "mark_something_complete"
+  ],
+  "core_rule": "Representation branches do not become source authority without a validated branch-link record."
+}

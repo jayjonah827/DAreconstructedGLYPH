@@ -1,0 +1,68 @@
+{
+  "version": "1.0.0",
+  "canonical_repo_root": "/Volumes/G-Workspace/Repos/active/DAreconstructedGLYPH",
+  "canonical_workspace_doc": "CANONICAL_WORKSPACE.md",
+  "readme_path": "README.md",
+  "approved_entrypoints": [
+    "bin/glyph-controller",
+    "bin/glyph-audit-submit",
+    "bin/glyph-audit-summary"
+  ],
+  "direct_cli_policy": {
+    "default_behavior": "reject",
+    "override_env": "GLYPH_ALLOW_DIRECT_CLI"
+  },
+  "audit_submission": {
+    "required_context_fields": [
+      "agent_id",
+      "task_type",
+      "task_scope",
+      "purpose",
+      "governance_refs"
+    ],
+    "preferred_entrypoint": "bin/glyph-audit-submit",
+    "audit_index_path": "state/audit_index.json",
+    "run_history_path": "state/run_history.json",
+    "issue_registry_path": "issues/open_issues.json",
+    "audit_root": "audits/by_agent",
+    "output_root": "outputs/by_agent",
+    "submission_root": "inputs/by_agent"
+  },
+  "heartbeat": {
+    "state_path": "state/heartbeat_state.json",
+    "event_retention_limit": 200,
+    "window_sequence": [
+      10,
+      20,
+      40
+    ]
+  },
+  "content": {
+    "route_map_path": "GLYPH_ROUTE_MAP.json",
+    "cache_path": "state/notion_content_cache.json",
+    "default_portal_route": "portal",
+    "notion_token_env": [
+      "NOTION_TOKEN",
+      "NOTION_API_TOKEN"
+    ]
+  },
+  "preflight_chain": {
+    "default": [
+      "README.md",
+      "CANONICAL_WORKSPACE.md",
+      "GLYPH_WORKSPACE_POLICY.json"
+    ],
+    "actions": {
+      "agent_audit": [
+        "DAILY_AGENT_AUDIT_PROTOCOL.md"
+      ],
+      "audit_summary": [
+        "DAILY_AGENT_AUDIT_PROTOCOL.md"
+      ],
+      "route_content": [
+        "GLYPH_ROUTE_MAP.json"
+      ],
+      "heartbeat": []
+    }
+  }
+}
