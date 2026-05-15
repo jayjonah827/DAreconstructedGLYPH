@@ -422,16 +422,27 @@ def terminal_dashboard() -> HTMLResponse:
 
 @app.get("/", response_class=HTMLResponse)
 def root() -> HTMLResponse:
-    heyer_livin_home = BASE / "heyer-livin-site" / "index.html"
-    if heyer_livin_home.exists():
-        return HTMLResponse(heyer_livin_home.read_text(encoding="utf-8"))
+    canonical_home = BASE / "heyer-livin-site" / "docs_index.html"
+    if canonical_home.exists():
+        return HTMLResponse(canonical_home.read_text(encoding="utf-8"))
+    fallback_home = BASE / "docs_index.html"
+    if fallback_home.exists():
+        return HTMLResponse(fallback_home.read_text(encoding="utf-8"))
     launch_page = BASE / "site" / "glyph-launch.html"
     if launch_page.exists():
         return HTMLResponse(launch_page.read_text(encoding="utf-8"))
-    dashboard = BASE / "docs_index.html"
-    if dashboard.exists():
-        return HTMLResponse(dashboard.read_text(encoding="utf-8"))
     return HTMLResponse("<h1>Glyph</h1><p>Engine running.</p>")
+
+
+@app.get("/arcade", response_class=HTMLResponse)
+def arcade() -> HTMLResponse:
+    game_page = BASE / "game" / "index.html"
+    if game_page.exists() and "url=/arcade" not in game_page.read_text(encoding="utf-8"):
+        return HTMLResponse(game_page.read_text(encoding="utf-8"))
+    simulator_ui = BASE / "index.html"
+    if simulator_ui.exists():
+        return HTMLResponse(simulator_ui.read_text(encoding="utf-8"))
+    return HTMLResponse("<h1>Arcade</h1><p>game/index.html not found.</p>", status_code=404)
 
 
 @app.get("/launch", response_class=HTMLResponse)
