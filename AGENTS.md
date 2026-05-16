@@ -13,3 +13,5 @@ Computer / Perplexity should only provide minimum facilitation:
 - avoid rebuilding, replacing deployment paths, creating fallback deployments, pushing repo changes, or acting as the controlling deployment agent unless Jair explicitly asks
 
 If Computer / Perplexity makes an error, the correction must be recorded in this repo-visible guardrail or another source-of-truth file that Codex can access, not only in assistant memory.
+
+Concrete incident context for the 2026-05-15 deployment-boundary error is recorded in `COMPUTER_INCIDENT_RECORD_2026-05-15.md`.
