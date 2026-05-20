@@ -22,6 +22,7 @@ from glyph_constraint import (
     classify_zone,
     compute_structural_constraint_ratio,
 )
+from urban_bloomberg import build_chain_snapshot
 
 BASE = Path(__file__).parent
 EVENTS_DIR = BASE / "events"
@@ -37,6 +38,36 @@ app = FastAPI(
 
 if (BASE / "static").is_dir():
     app.mount("/static", StaticFiles(directory=str(BASE / "static")), name="static")
+
+# --- KairoGLYPH intake + content API (additive) ---
+# Mounts /api/intake, /api/events, /api/content, /api/subscribe, /api/db/health.
+# Registered here, before the route definitions below, so the catch-all
+# route does not shadow it. Wrapped so a DB/driver problem can never stop
+# the server from booting.
+try:
+    from kairo_intake import router as kairo_router
+
+    app.include_router(kairo_router)
+except Exception as _kairo_err:  # pragma: no cover
+    print(f"[kairo] intake router not loaded: {_kairo_err}")
+
+# The KairoGLYPH front end — serves web/kairoglyph.html at the six public
+# routes. Registered here, before the legacy route handlers below, so the
+# new site takes precedence. Wrapped so a missing file can't stop boot.
+try:
+    from kairo_site import router as kairo_site_router
+
+    app.include_router(kairo_site_router)
+except Exception as _kairo_site_err:  # pragma: no cover
+    print(f"[kairo] site router not loaded: {_kairo_site_err}")
+
+# KairoGLYPH agentic execution layer — /api/agents routes.
+try:
+    from kairo_agents import router as kairo_agents_router
+
+    app.include_router(kairo_agents_router)
+except Exception as _kairo_agents_err:  # pragma: no cover
+    print(f"[kairo] agents router not loaded: {_kairo_agents_err}")
 
 
 def _utc_now_iso() -> str:
@@ -258,6 +289,8 @@ def layers() -> dict[str, Any]:
             "glyph_source_layers": "/api/glyph/source-layers",
             "glyph_voice_handoff": "/api/glyph/voice-handoff",
             "glyph_local_to_public_bridge": "/api/glyph/bridge",
+            "urban_bloomberg": "/urban-bloomberg",
+            "urban_bloomberg_chain": "/api/urban-bloomberg/chain",
         }
     }
 
@@ -384,6 +417,8 @@ def terminal_dashboard_summary() -> dict[str, Any]:
             "glyph_source_layers": "/api/glyph/source-layers",
             "glyph_voice_handoff": "/api/glyph/voice-handoff",
             "glyph_local_to_public_bridge": "/api/glyph/bridge",
+            "urban_bloomberg": "/urban-bloomberg",
+            "urban_bloomberg_chain": "/api/urban-bloomberg/chain",
         },
     }
 
@@ -410,6 +445,19 @@ async def run_full_tool(request: Request) -> dict[str, Any]:
         "cross_domain_convergence_tracking": {"reference_point": REFERENCE_POINT},
         "event": event,
     }
+
+
+@app.get("/api/urban-bloomberg/chain")
+def urban_bloomberg_chain() -> dict[str, Any]:
+    return build_chain_snapshot()
+
+
+@app.get("/urban-bloomberg", response_class=HTMLResponse)
+def urban_bloomberg_terminal() -> HTMLResponse:
+    terminal_ui = BASE / "site" / "urban_bloomberg.html"
+    if terminal_ui.exists():
+        return HTMLResponse(terminal_ui.read_text(encoding="utf-8"))
+    return HTMLResponse("<h1>Urban Bloomberg</h1><p>site/urban_bloomberg.html not found.</p>", status_code=404)
 
 
 @app.get("/terminal", response_class=HTMLResponse)

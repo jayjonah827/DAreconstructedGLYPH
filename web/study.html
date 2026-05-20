@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THE JONAH STUDY — Choice Is Not Chance — Jair Valley</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --bg: #1c1c1e;
+    --bg-deep: #151517;
+    --surface: #242426;
+    --surface-dim: #1f1f21;
+    --border: #3a3a3c;
+    --border-light: #2c2c2e;
+    --text: #f5f0e8;
+    --text-secondary: #c7c2b8;
+    --text-tertiary: #8a8680;
+    --accent: #9ca3af;
+    --accent-cool: #b0b7c3;
+    --accent-steel: #d1cdc4;
+    --highlight: #8a8680;
+    --tag-confirmed: #6b7280;
+    --tag-open: #4b5563;
+    --tag-domain: #78716c;
+    --red-subtle: #dc2626;
+    --green-subtle: #365314;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* COVER */
+  .cover {
+    background: #0e0e10;
+    color: var(--text);
+    padding: 80px 60px;
+    min-height: 60vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+  .cover .label {
+    font-size: 11px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--highlight);
+    margin-bottom: 24px;
+  }
+  .cover h1 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 42px;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 12px;
+    color: var(--text);
+  }
+  .cover h2 {
+    font-size: 18px;
+    font-weight: 300;
+    color: var(--highlight);
+    margin-bottom: 48px;
+  }
+  .cover-meta {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    border-top: 1px solid rgba(255,255,255,0.15);
+    padding-top: 28px;
+  }
+  .cover-meta div {
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--highlight);
+  }
+  .cover-meta span {
+    display: block;
+    font-size: 13px;
+    color: var(--text);
+    margin-top: 4px;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  /* MAIN CONTAINER */
+  .container {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 60px 40px;
+  }
+
+  /* SECTIONS */
+  .section {
+    margin-bottom: 64px;
+  }
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 10px;
+    margin-bottom: 24px;
+  }
+  .section-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--accent);
+    letter-spacing: 1px;
+  }
+  .section-title {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  /* SUBSECTION */
+  .subsection {
+    margin-bottom: 36px;
+  }
+  .subsection h4 {
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--accent-cool);
+    margin-bottom: 12px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  p { margin-bottom: 14px; font-size: 14px; color: var(--text-secondary); }
+  p.lead { font-size: 16px; color: var(--text); line-height: 1.8; }
+
+  /* EQUATION BLOCKS */
+  .equation {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--accent-steel);
+    padding: 20px 24px;
+    margin: 20px 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 15px;
+    color: var(--text);
+    line-height: 2;
+  }
+  .equation .label {
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  /* HYPOTHESIS */
+  .hypothesis {
+    background: var(--surface);
+    border-left: 4px solid var(--accent-cool);
+    padding: 18px 22px;
+    margin-bottom: 16px;
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--text-secondary);
+  }
+  .hypothesis .h-label {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent-steel);
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+
+  /* TABLES */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    margin: 16px 0;
+    background: var(--surface);
+  }
+  thead th {
+    background: #2a2a2c;
+    color: var(--accent-cool);
+    padding: 10px 10px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    border-bottom: 2px solid #3a3a3c;
+  }
+  tbody td {
+    padding: 10px 10px;
+    border-bottom: 1px solid var(--border-light);
+    color: var(--text-secondary);
+    vertical-align: top;
+  }
+  tbody tr:hover td { background: var(--surface-dim); }
+  .result-cell { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text); font-weight: 500; }
+
+  /* TAGS */
+  .tag {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 2px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin: 2px 4px 2px 0;
+  }
+  .tag.confirmed { background: #3a3a3c; color: var(--text); }
+  .tag.open { background: var(--bg-deep); color: var(--accent-cool); border: 1px solid var(--border); }
+  .tag.domain { background: var(--surface-dim); color: var(--accent-cool); border: 1px solid var(--border); }
+  .tag.rejected { background: #dc2626; color: #fff; }
+
+  /* COMPASS */
+  .compass-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 20px 0;
+  }
+  .compass-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 20px;
+  }
+  .compass-card h5 {
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent-steel);
+    margin-bottom: 8px;
+  }
+  .compass-card p { font-size: 13px; margin-bottom: 0; }
+
+  /* CONVERGENCE */
+  .convergence-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 24px;
+    margin: 20px 0;
+  }
+  .convergence-block h5 {
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent-steel);
+    margin-bottom: 12px;
+  }
+
+  /* STAT CARD */
+  .stat-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin: 20px 0;
+  }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 18px;
+    text-align: center;
+  }
+  .stat-card .num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--accent-steel);
+  }
+  .stat-card .desc {
+    font-size: 11px;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 4px;
+  }
+
+  /* SOURCES */
+  .source-list {
+    list-style: none;
+    padding: 0;
+  }
+  .source-list li {
+    font-size: 12px;
+    color: var(--text-tertiary);
+    padding: 6px 0;
+    border-bottom: 1px solid var(--border-light);
+    line-height: 1.5;
+  }
+
+  /* ACADEMIC WORK */
+  .essay-ref {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 16px 20px;
+    margin-bottom: 12px;
+  }
+  .essay-ref h5 {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .essay-ref p {
+    font-size: 12px;
+    color: var(--text-tertiary);
+    margin-bottom: 0;
+  }
+
+  hr.page-break {
+    border: none;
+    border-top: 2px solid var(--border);
+    margin: 64px 0;
+  }
+
+  .note {
+    font-size: 12px;
+    color: var(--text-tertiary);
+    font-style: italic;
+    margin-top: 12px;
+    line-height: 1.6;
+  }
+
+  .colophon {
+    text-align: center;
+    padding: 60px 40px;
+    border-top: 1px solid var(--border);
+    margin-top: 60px;
+    font-size: 12px;
+    color: var(--text-tertiary);
+    letter-spacing: 1px;
+  }
+
+  @media (max-width: 700px) {
+    .cover { padding: 40px 24px; }
+    .cover h1 { font-size: 28px; }
+    .cover-meta { grid-template-columns: 1fr 1fr; }
+    .container { padding: 32px 20px; }
+    .stat-row { grid-template-columns: 1fr 1fr; }
+    .compass-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== COVER ===== -->
+<div class="cover">
+  <div class="label">Independent Research Study &middot; Berkeley City College &middot; Stat-C1000</div>
+  <h1>Choice Is Not Chance</h1>
+  <h2>A Cross-Domain Statistical Study of Structural Preference and Cultural Inequality</h2>
+  <div class="cover-meta">
+    <div>Researcher <span>Jair Valley</span></div>
+    <div>Faculty Advisor <span>Professor Valdez</span></div>
+    <div>Institution <span>Berkeley City College &middot; Oakland CA</span></div>
+    <div>Duration <span>30-Day Observation + Cross-Domain Analysis</span></div>
+    <div>Primary Site <span>Tender Greens, Berkeley CA</span></div>
+    <div>Methods <span>&chi;&sup2;, Pearson r, KS, Mann-Whitney U, Z-test</span></div>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- ===== SUMMARY STATS ===== -->
+<div class="stat-row">
+  <div class="stat-card"><div class="num">13</div><div class="desc">Tests Run</div></div>
+  <div class="stat-card"><div class="num">0</div><div class="desc">H&#8320; Retained</div></div>
+  <div class="stat-card"><div class="num">5</div><div class="desc">Domains</div></div>
+  <div class="stat-card"><div class="num">39%</div><div class="desc">Ceiling Constant</div></div>
+</div>
+
+<!-- ===== &sect;0 THESIS ===== -->
+<div class="section" id="thesis">
+  <div class="section-header">
+    <span class="section-num">&sect; 0</span>
+    <span class="section-title">Thesis</span>
+  </div>
+  <p class="lead">When choice occurs within a constrained system, selection clusters around a structural default. That clustering is stable across time, domain, and scale. The gap between the ceiling and the floor in any constrained system is not random. It is the measurable output of structural preference.</p>
+
+  <div class="hypothesis">
+    <div class="h-label">H&#8320; &mdash; Null</div>
+    The distribution of outcomes in a constrained system is uniform (random). &mu; = 0.
+  </div>
+  <div class="hypothesis">
+    <div class="h-label">H&#8321; &mdash; Alternative</div>
+    The distribution clusters non-randomly around a structural default. &mu; &ne; 0.
+  </div>
+</div>
+
+<!-- ===== &sect;1 MASTER EQUATION ===== -->
+<div class="section" id="equation">
+  <div class="section-header">
+    <span class="section-num">&sect; 1</span>
+    <span class="section-title">Master Equation</span>
+  </div>
+
+  <div class="equation">
+    <span class="label">Knowledge Transmission Function</span>
+    K(t) = &Sigma;&#11388; [(C&#11388; &middot; R&#11388;) / &Delta;S&#11388;] + &epsilon;
+  </div>
+
+  <table>
+    <thead><tr><th>Variable</th><th>Name</th><th>Definition</th><th>Unit</th></tr></thead>
+    <tbody>
+      <tr><td class="result-cell">K(t)</td><td>Knowledge Transmitted</td><td>Total structural signal at time t</td><td>Composite index</td></tr>
+      <tr><td class="result-cell">C</td><td>Cultural Constant</td><td>Ceiling/floor ratio &mdash; the measurable gap between default and erasure</td><td>Ratio (dimensionless)</td></tr>
+      <tr><td class="result-cell">R</td><td>Randomness Index</td><td>Measured deviation from uniform distribution</td><td>&chi;&sup2; or KS D</td></tr>
+      <tr><td class="result-cell">&Delta;S</td><td>Scale Shift</td><td>The constraint variable (currently identified as money)</td><td>$ or structural proxy</td></tr>
+      <tr><td class="result-cell">&epsilon;</td><td>Epsilon / Jonah Variable</td><td>Structural remainder the model cannot account for &mdash; agency inside maximum constraint</td><td>Residual</td></tr>
+    </tbody>
+  </table>
+
+  <div class="subsection">
+    <h4>Construct Dictionary &mdash; Null Model by Domain</h4>
+    <p>The global null H&#8320;: &mu; = 0 is instantiated differently per domain. Each domain specifies its own null distribution against which structural patterning is tested.</p>
+    <table>
+      <thead><tr><th>Domain</th><th>Null Model</th><th>Test</th><th>df</th></tr></thead>
+      <tbody>
+        <tr><td>Consumer Behavior</td><td>Uniform selection across menu items: p&#770; = 1/k</td><td>&chi;&sup2; GOF</td><td>17</td></tr>
+        <tr><td>Labor Market</td><td>Equal callback rates: DR = 1.00</td><td>Z-test on proportions</td><td>&mdash;</td></tr>
+        <tr><td>Electoral</td><td>No ceiling on vote share by race/gender</td><td>Descriptive + historical range</td><td>&mdash;</td></tr>
+        <tr><td>Governance</td><td>Women leaders distributed uniformly across democracy scores</td><td>KS, &chi;&sup2;, Mann-Whitney U</td><td>varies</td></tr>
+        <tr><td>Historical</td><td>Occupations uniformly distributed among free Black population</td><td>&chi;&sup2; GOF</td><td>80</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="subsection">
+    <h4>Multiple Testing Protocol</h4>
+    <p>13 hypothesis tests across 5 domains. At &alpha; = 0.05, the probability of at least one false positive under a global null is ~49% without correction. Primary confirmatory tests (DR ratio in labor; protein distribution in consumer data) are designated in advance at &alpha; = 0.05 without adjustment. Secondary exploratory tests are labeled exploratory and interpreted as hypothesis-generating. All tested outcomes reported including null results.</p>
+  </div>
+</div>
+
+<hr class="page-break">
+
+<!-- ===== &sect;2 GEOMETRIC PROOF ===== -->
+<div class="section" id="geometry">
+  <div class="section-header">
+    <span class="section-num">&sect; 2</span>
+    <span class="section-title">The Geometric Proof</span>
+  </div>
+
+  <p>The null hypothesis is a circle. Every point on the circumference equally likely. The data produces a square. Corners. Clustering. Weight in specific directions the circle cannot reach.</p>
+
+  <div class="equation">
+    <span class="label">Gap Measurement</span>
+    Diagonal of unit square = &radic;2 = 1.414<br>
+    Inscribed circle radius = 0.5<br>
+    &epsilon; = &radic;2 &minus; 1 = 0.414<br>
+    <br>
+    The gap between the corner of the square and the nearest point on the circle.<br>
+    This is &epsilon; stated geometrically &mdash; the remainder that the uniform model cannot capture regardless of sample size or domain.
+  </div>
+
+  <p>The two graphs the data produces are not separate lines. They are the same diagonal read in two directions. Graph A: the ceiling line, descending from the default toward the mean. Graph B: the floor line, ascending from erasure toward the mean. Same slope. Opposite direction. Same structural origin.</p>
+</div>
+
+<hr class="page-break">
+
+<!-- ===== &sect;3 CONFIRMED RESULTS ===== -->
+<div class="section" id="results">
+  <div class="section-header">
+    <span class="section-num">&sect; 3</span>
+    <span class="section-title">Confirmed Statistical Results</span>
+  </div>
+  <p>All tests below run on verified datasets. Test statistics, degrees of freedom, and p-values reported. All reject H&#8320; at p &lt; 0.001 unless noted.</p>
+
+  <!-- DOMAIN I -->
+  <div class="subsection">
+    <h4>Domain I &mdash; Consumer Behavior</h4>
+    <p>Dataset: Tender Greens Oakland PMIX cashier logs. Feb 11 &ndash; Mar 8, 2026. 11 reports. 1,834 protein selections across all channels (in-person and delivery collapsed by item).</p>
+    <table>
+      <thead><tr><th>Statistic</th><th>Value</th></tr></thead>
+      <tbody>
+        <tr><td>&chi;&sup2;</td><td class="result-cell">1,115.19</td></tr>
+        <tr><td>df</td><td class="result-cell">17</td></tr>
+        <tr><td>p-value</td><td class="result-cell">&lt; 0.001</td></tr>
+        <tr><td>Ceiling/floor ratio</td><td class="result-cell">10x</td></tr>
+        <tr><td>Top 3 capture</td><td class="result-cell">39.1% of all orders</td></tr>
+      </tbody>
+    </table>
+    <p>Steak holds #1 position in all 11 reports across both delivery and in-person channels. The constraint (the menu) was set before any customer walked in. <span class="tag rejected">H&#8320; REJECTED</span></p>
+  </div>
+
+  <!-- DOMAIN II -->
+  <div class="subsection">
+    <h4>Domain II &mdash; Labor Market</h4>
+    <p>Dataset: Bertrand &amp; Mullainathan (2004). Quillian et al. (2017) meta-analysis. Resume audit studies with randomized Black- and white-associated names.</p>
+    <table>
+      <thead><tr><th>Statistic</th><th>Value</th></tr></thead>
+      <tbody>
+        <tr><td>Discrimination Ratio (DR)</td><td class="result-cell">1.50</td></tr>
+        <tr><td>Interpretation</td><td>Black applicants receive callbacks at 2/3 the rate of identical white applicants</td></tr>
+        <tr><td>Stability</td><td class="result-cell">30 years of audit studies &mdash; ratio unchanged</td></tr>
+      </tbody>
+    </table>
+
+    <p>Secondary dataset: California EDD weekly UI claims, Mar 2020 &ndash; Feb 2026.</p>
+    <table>
+      <thead><tr><th>Measure</th><th>Value</th></tr></thead>
+      <tbody>
+        <tr><td>Pre-COVID baseline</td><td class="result-cell">96,298 claims/week</td></tr>
+        <tr><td>Peak week (3/28/2020)</td><td class="result-cell">1,064,826 claims</td></tr>
+        <tr><td>Z-score</td><td class="result-cell">202.46</td></tr>
+        <tr><td>p-value</td><td class="result-cell">&lt; 0.001</td></tr>
+        <tr><td>Return to baseline</td><td class="result-cell">14 months (stable at 44,438 &ndash; 45,965 avg through 2026)</td></tr>
+      </tbody>
+    </table>
+    <p>The labor market returned to its structural default in 14 months. The system snapped back. <span class="tag rejected">H&#8320; REJECTED</span></p>
+  </div>
+
+  <!-- DOMAIN III -->
+  <div class="subsection">
+    <h4>Domain III &mdash; Electoral</h4>
+    <p>Dataset: Edison/NEP exit polls. AP VoteCast 2024. Six presidential elections featuring Black candidates or the 2024 gender gap.</p>
+    <table>
+      <thead><tr><th>Measure</th><th>Value</th></tr></thead>
+      <tbody>
+        <tr><td>White vote ceiling for Black candidates</td><td class="result-cell">39&ndash;43% across six elections</td></tr>
+        <tr><td>Ceiling movement</td><td class="result-cell">None &mdash; regardless of qualifications, incumbency, or spending</td></tr>
+        <tr><td>Under-30 gender gap (2024)</td><td class="result-cell">12&ndash;18 percentage points</td></tr>
+      </tbody>
+    </table>
+    <p>The ceiling does not move. <span class="tag rejected">H&#8320; REJECTED</span></p>
+  </div>
+
+  <!-- DOMAIN IV -->
+  <div class="subsection">
+    <h4>Domain IV &mdash; Governance (Demographics / Biology / Life Expectancy)</h4>
+    <p>Dataset: Women World Leaders 2026. n = 22 women heads of state. Democracy scores 1&ndash;9 (Freedom House).</p>
+    <table>
+      <thead><tr><th>Test</th><th>Statistic</th><th>p-value</th></tr></thead>
+      <tbody>
+        <tr><td>Kolmogorov-Smirnov</td><td class="result-cell">D = 0.397</td><td class="result-cell">0.0013</td></tr>
+        <tr><td>Chi-Square</td><td class="result-cell">&chi;&sup2; = 6.91</td><td class="result-cell">0.032</td></tr>
+        <tr><td>Mann-Whitney U</td><td class="result-cell">U = 259</td><td class="result-cell">0.920</td></tr>
+      </tbody>
+    </table>
+    <p>Women cluster in high-scoring democracies at rates 22 percentage points above chance. Absent from low-scoring systems at 24 points below chance. Mann-Whitney U = 259, p = 0.920: women and men who <em>do</em> lead are not significantly different from each other.</p>
+    <p>The filter is not capability. The filter is the structure of the system that permits entry. <span class="tag rejected">H&#8320; REJECTED</span></p>
+
+    <div class="convergence-block">
+      <h5>Population Comparison &mdash; The Gap</h5>
+      <p>Women represent ~50% of the global population. They hold 22 of ~195 head-of-state positions (11.3%). The gap between biological representation and political representation is 38.7 percentage points. This is not a pipeline problem. The population exists. The constraint filters before entry.</p>
+      <p>Birth rates, life expectancy, and biological distribution confirm parity at the population level. The deviation appears exclusively at the selection layer &mdash; where the structure decides who enters. Same pattern as the menu. Same pattern as the callback. The constraint was set before anyone arrived.</p>
+    </div>
+  </div>
+
+  <!-- DOMAIN V -->
+  <div class="subsection">
+    <h4>Domain V &mdash; Historical (Demographics / Population / Life Expectancy)</h4>
+    <p>Dataset: Contested Freedom Dataset (CFDataFinal20201221.xlsx). 1,321 free Black individuals, Savannah GA, antebellum period. Variables: name, gender, age, occupation, property ownership, guardian.</p>
+    <table>
+      <thead><tr><th>Test</th><th>Statistic</th><th>p-value</th></tr></thead>
+      <tbody>
+        <tr><td>Chi-Square GOF</td><td class="result-cell">&chi;&sup2; = 3,505.17</td><td class="result-cell">&lt; 0.001</td></tr>
+        <tr><td>df</td><td class="result-cell" colspan="2">80</td></tr>
+      </tbody>
+    </table>
+    <table>
+      <thead><tr><th>Measure</th><th>Value</th></tr></thead>
+      <tbody>
+        <tr><td>Top 3 occupations share</td><td class="result-cell">39.2% of all recorded workers</td></tr>
+        <tr><td>No occupation recorded</td><td class="result-cell">583 / 1,321 (44.1%)</td></tr>
+        <tr><td>Property owners</td><td class="result-cell">22.0%</td></tr>
+        <tr><td>Explicitly no property</td><td class="result-cell">31.0%</td></tr>
+      </tbody>
+    </table>
+    <p><span class="tag rejected">H&#8320; REJECTED</span></p>
+
+    <div class="convergence-block">
+      <h5>Population Context &mdash; Haiti as Test Case Zero</h5>
+      <p>Saint-Domingue, 1789: ~500,000 enslaved Africans, ~32,000 free people of color, ~40,000 white colonists. The enslaved population outnumbered the free population 8:1. Life expectancy on sugar plantations: 7&ndash;10 years post-arrival. Birth rates among enslaved populations suppressed by labor conditions, malnutrition, and mortality. The demographic structure was designed to extract maximum labor from minimum survival.</p>
+      <p>The Haitian Revolution (1791&ndash;1804) is Test Case Zero. Maximum exclusion produced maximum agency. The most suppressed position in the system generated the clearest measurable signal. The population that the structure calculated would not survive became the population that destroyed the structure.</p>
+      <p>The transatlantic slave trade moved 10+ million people. Less than 500,000 went to North America. 4.8 million went to Brazil alone. The demographic distribution of forced labor maps onto the same structural logic: populations allocated by constraint, not by choice.</p>
+    </div>
+  </div>
+</div>
+
+<hr class="page-break">
+
+<!-- ===== &sect;4 THE CONSTANT ===== -->
+<div class="section" id="constant">
+  <div class="section-header">
+    <span class="section-num">&sect; 4</span>
+    <span class="section-title">The Constant: 39%</span>
+  </div>
+  <p class="lead">Across two entirely unrelated datasets separated by 200 years:</p>
+
+  <div class="stat-row" style="grid-template-columns: 1fr 1fr;">
+    <div class="stat-card">
+      <div class="num">39.1%</div>
+      <div class="desc">Consumer &mdash; Top 3 proteins (2026)</div>
+    </div>
+    <div class="stat-card">
+      <div class="num">39.2%</div>
+      <div class="desc">Historical &mdash; Top 3 occupations (antebellum)</div>
+    </div>
+  </div>
+
+  <p>This number is not asserted as a universal constant. It is reported as a finding that requires replication across additional domains before any claim of universality is made. It is the most important open question in the study.</p>
+</div>
+
+<!-- ===== &sect;5 CONVERGENCE vs LOOPING ===== -->
+<div class="section" id="convergence">
+  <div class="section-header">
+    <span class="section-num">&sect; 5</span>
+    <span class="section-title">Convergence vs. Looping</span>
+  </div>
+
+  <p class="lead">Time is one pattern. It converges. It does not loop.</p>
+
+  <div class="convergence-block">
+    <h5>The Distinction</h5>
+    <p>A loop repeats the same state. It returns to origin. The system resets and runs the same sequence. If the data looped, the COVID labor shock would have produced a new pattern. It did not. The system returned to its structural default in 14 months &mdash; not because it repeated, but because the constraint is the attractor.</p>
+    <p>Convergence is directional. Multiple inputs, across time and domain, produce the same structural output without repeating the same sequence of events. The menu in 2026 and the occupation registry in 1830 are not the same event. They share the same structural shape because the constraint that produces 39% is upstream of both.</p>
+  </div>
+
+  <div class="convergence-block">
+    <h5>Why This Matters for Reasoning</h5>
+    <p>If the pattern looped, it could be interrupted by breaking the loop at any point. Remove the stimulus, break the cycle. That is the therapeutic model. That is the intervention model. It assumes the problem is repetition.</p>
+    <p>The data does not support that. The data shows convergence. Multiple independent systems &mdash; separated by centuries, geography, and domain &mdash; arriving at the same measurable output. Removing one instance of the constraint does not prevent convergence from another direction. The COVID stimulus temporarily moved the labor distribution toward uniform. Within 14 months the structural default reasserted.</p>
+    <p>This is the simulation argument: the data is structurally different from randomness in a way that persists across independent measurements. Not because the same event keeps happening. Because the same constraint keeps producing the same shape regardless of which event carries it.</p>
+  </div>
+
+  <div class="convergence-block">
+    <h5>Training Glyph: Weighing Inconsistencies</h5>
+    <p>If this framework trains a model, the model needs to distinguish between inconsistencies that indicate noise and inconsistencies that indicate structural signal. &epsilon; is not error. It is the measurement of agency inside constraint. A model trained on this data should weight &epsilon; as informational, not as deviation. The 22% of antebellum free Black individuals who owned property inside maximum exclusion are not outliers to be smoothed. They are the signal.</p>
+    <p>Time convergence (not looping) means the model should expect the same structural shape to appear in new domains without expecting the same sequence of events. Pattern recognition, not pattern matching.</p>
+  </div>
+</div>
+
+<hr class="page-break">
+
+<!-- ===== &sect;6 CULTURAL COMPASS ===== -->
+<div class="section" id="compass">
+  <div class="section-header">
+    <span class="section-num">&sect; 6</span>
+    <span class="section-title">The Cultural Compass</span>
+  </div>
+
+  <div class="compass-grid">
+    <div class="compass-card">
+      <h5>North (39%) &mdash; Ceiling</h5>
+      <p>Where the default clusters. Where the chosen live. Steak. White callback. High-democracy women leaders. Seamstress. What gets selected before the room opens.</p>
+    </div>
+    <div class="compass-card">
+      <h5>South (2%) &mdash; Floor</h5>
+      <p>Where the erased live. Present in the system. Never selected. Short Rib. No occupation recorded. No property. No callback. Not because it is lesser. Because the system did not build the default around it.</p>
+    </div>
+    <div class="compass-card">
+      <h5>East/West &mdash; The Middle (59%)</h5>
+      <p>The population that experiences the constraint without being defined by either pole. The mass that makes the ratio possible. Everyone who moves through the system as participant, not as ceiling or floor.</p>
+    </div>
+    <div class="compass-card">
+      <h5>Center (&mu;) &mdash; The Mean</h5>
+      <p>Where all four directions meet. The 2 in the closed system 0&ndash;4. The relational point. &epsilon; lives here: the structural remainder that the model cannot predict. The 22% who owned property inside maximum exclusion. The 2 vegetarians out of 47. The Haitian revolution.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== &sect;7 30-DAY DATA COLLECTION FRAMEWORK ===== -->
+<div class="section" id="datacollection">
+  <div class="section-header">
+    <span class="section-num">&sect; 7</span>
+    <span class="section-title">30-Day Data Collection Framework</span>
+  </div>
+  <p>Tender Greens POS &middot; Aloha Daily Cashier Log + Ethnographic Observation</p>
+
+  <table>
+    <thead>
+      <tr><th>Section</th><th>Variables</th><th>Test</th><th>Null Model</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>&sect;7.1 Menu Category</td><td>Plates (a), Salads (b), Sandwiches (c), n Total, p&#770;</td><td>&chi;&sup2; GOF</td><td>p(plate) = p(salad) = p(sandwich) = 1/3</td></tr>
+      <tr><td>&sect;7.2 Protein Selection</td><td>Chicken, Steak, Salmon, Rare(T+Sb+Sh), Gross Rev</td><td>&chi;&sup2; + Pearson r</td><td>p&#770; = 0.25 per protein (4 categories)</td></tr>
+      <tr><td>&sect;7.3 Rare Protein Detail</td><td>Ahi Tuna, Sea Bass, Shrimp, Catering flag, Anomaly flag</td><td>&chi;&sup2; independence</td><td>Rare protein &times; DOTW independent</td></tr>
+      <tr><td>&sect;7.4 Beverages</td><td>Mint Lemonade, Agua Fresca, Seasonal, Water, d/n ratio</td><td>Pearson r</td><td>d/n uncorrelated with daily gross</td></tr>
+      <tr><td>&sect;7.5 Shift &times; DOTW</td><td>Day shift, Night shift, gross by shift</td><td>&chi;&sup2; independence</td><td>Shift totals independent of DOTW</td></tr>
+      <tr><td>&sect;7.6 Revenue</td><td>Daily gross, ticket avg, tips, labor cost</td><td>Pearson r + moving avg</td><td>Revenue uncorrelated with protein mix</td></tr>
+      <tr><td>&sect;7.7 Ethnographic</td><td>Customer count, wait time, menu questions, modifications</td><td>Field notes</td><td>Qualitative &mdash; triangulation</td></tr>
+      <tr><td>&sect;7.8 Summary</td><td>&chi;&sup2; GOF, Pearson r, moving avg overlay</td><td>All</td><td>Composite test of all sections</td></tr>
+    </tbody>
+  </table>
+  <p class="note">Formula: p&#770;&#7424; = a / (a + b + c) | &chi;&sup2; = &Sigma;[(O&#7522; &minus; E&#7522;)&sup2; / E&#7522;] | E&#7522; = N/k | Rare spike threshold: R &ge; &mu;_R + 2&sigma;_R</p>
+</div>
+
+<hr class="page-break">
+
+<!-- ===== &sect;8 ACADEMIC WORK ===== -->
+<div class="section" id="academic">
+  <div class="section-header">
+    <span class="section-num">&sect; 8</span>
+    <span class="section-title">Academic Work &amp; Supporting Research</span>
+  </div>
+
+  <div class="subsection">
+    <h4>Scholarship &amp; Transfer Portfolio</h4>
+    <div class="essay-ref">
+      <h5>2026 PAAAA Scholarship Application</h5>
+      <p>Pan African Association of America and Africa &middot; March 2026</p>
+    </div>
+    <div class="essay-ref">
+      <h5>Evidence-Based Operational Improvements &mdash; J. Valley</h5>
+      <p>Operational analysis document &middot; February 2026</p>
+    </div>
+    <div class="essay-ref">
+      <h5>Research Brief: Choice Is Not Chance</h5>
+      <p>13-test cross-domain study summary &middot; Letter of support request for UC Berkeley Haas &middot; March 2026</p>
+    </div>
+    <div class="essay-ref">
+      <h5>Recommendation Letter &mdash; Amber Johnson</h5>
+      <p>Supporting documentation &middot; March 2026</p>
+    </div>
+  </div>
+
+  <div class="subsection">
+    <h4>History 7A &mdash; U.S. to 1877</h4>
+    <div class="essay-ref">
+      <h5>Week 2 Literary Essay</h5>
+      <p>Historical literature analysis &middot; Hist 7A</p>
+    </div>
+    <div class="essay-ref">
+      <h5>Common Sense by Thomas Paine</h5>
+      <p>Critical reading response</p>
+    </div>
+    <div class="essay-ref">
+      <h5>Thomas Paine by Bernard Bailyn</h5>
+      <p>Secondary source analysis</p>
+    </div>
+    <div class="essay-ref">
+      <h5>Edmund Morgan &mdash; In The Puritan Family</h5>
+      <p>Structural analysis of early American social systems</p>
+    </div>
+    <div class="essay-ref">
+      <h5>The Duel &mdash; Joseph Ellis</h5>
+      <p>Power, constraint, and the structure of political conflict</p>
+    </div>
+    <div class="essay-ref">
+      <h5>Week 12 Synthetic Question Essay</h5>
+      <p>Cross-period analytical synthesis</p>
+    </div>
+  </div>
+
+  <div class="subsection">
+    <h4>History 8B &mdash; Latin American Civilization</h4>
+    <div class="essay-ref">
+      <h5>Module 4 Forum Post</h5>
+      <p>Latin American history &middot; Autonomy, land, and structural constraint &middot; March 2026</p>
+    </div>
+    <div class="essay-ref">
+      <h5>19th Century Mexican American Relations &mdash; Reflection</h5>
+      <p>Historical structural analysis &middot; March 2026</p>
+    </div>
+    <div class="essay-ref">
+      <h5>The Book of Life &mdash; Generative System</h5>
+      <p>Each interaction produces a unique page reflecting structured outcomes from constrained input &middot; March 2026</p>
+    </div>
+    <div class="essay-ref">
+      <h5>Key Texts: Fanon (Wretched of the Earth), Cesaire (Discourse on Colonialism), Chasteen (Tour of Latin America)</h5>
+      <p>Theoretical foundation: colonialism as structural constraint producing measurable outcomes across populations</p>
+    </div>
+  </div>
+
+  <div class="subsection">
+    <h4>Sociology / Media Literacy</h4>
+    <div class="essay-ref">
+      <h5>Cowboy Carter Media Analysis Essay</h5>
+      <p>Media literacy / content analysis &middot; Narrative construction across 4 articles</p>
+    </div>
+    <div class="essay-ref">
+      <h5>Authenticity &amp; Norm Violation Draft</h5>
+      <p>Folkway violation study &mdash; field observation data feeding into Domain I</p>
+    </div>
+    <div class="essay-ref">
+      <h5>Ego Death &mdash; Jair Valley (2026)</h5>
+      <p>Personal research document &middot; March 2026</p>
+    </div>
+    <div class="essay-ref">
+      <h5>Minority Survival Paper</h5>
+      <p>Cross-domain structural inequality analysis</p>
+    </div>
+  </div>
+
+  <div class="subsection">
+    <h4>Statistics C-1000 &mdash; Professor Valdez</h4>
+    <div class="essay-ref">
+      <h5>Correlation Model (Ch. 9)</h5>
+      <p>Three-year conflict correlation model &middot; Density, causation, narrative timing analysis</p>
+    </div>
+    <div class="essay-ref">
+      <h5>Construct Dictionary v2</h5>
+      <p>Operationalized definitions: C, R, &Delta;S, &epsilon;, K(t) &middot; Domain-specific measurement functions</p>
+    </div>
+    <div class="essay-ref">
+      <h5>Sections 1.1 &ndash; 5.1 Notes (Filled In)</h5>
+      <p>Complete coursework: probability, distributions, correlation, regression &middot; Applied to study methodology</p>
+    </div>
+  </div>
+</div>
+
+<hr class="page-break">
+
+<!-- ===== &sect;9 FAMILY TRANSMISSION ===== -->
+<div class="section" id="transmission">
+  <div class="section-header">
+    <span class="section-num">&sect; 9</span>
+    <span class="section-title">The Family Transmission</span>
+  </div>
+
+  <p class="lead">"I always fear my children's mind be the reason they would have to work for themselves and not for someone else because they have my mind." &mdash; Mother | Born 2/7/8 | Anthropologist</p>
+
+  <p>She was not naming a fear. She was naming the transmission.</p>
+
+  <p>Mother holds a degree in anthropology. Father went to design school for fashion. They gave the researcher their handwriting and their frameworks. The study did not come from a library. It came from 87 applications and 2 offers. From working a hotel front desk. From Tender Greens cashier logs logged after a closing shift. From a mother's degree used to raise children instead of building a career. From a father reducing to 1 &mdash; the original unit.</p>
+
+  <div class="convergence-block">
+    <h5>Three Versions &mdash; Same Coin</h5>
+    <p>Version 1 &mdash; The Proof. For the institution. Chi-square. p-values. Replication protocol. The language that opens the academic door.</p>
+    <p>Version 2 &mdash; The Translation. For the market. Consumer behavior. Brand strategy. Organizational design. The language that funds the work.</p>
+    <p>Version 3 &mdash; The Poem. For the family. For anyone like us. The transmission of understanding before labeling.</p>
+    <p>Three transmissions. Same coin. Both sides true simultaneously.</p>
+  </div>
+</div>
+
+<!-- ===== &sect;10 REPLICATION ===== -->
+<div class="section" id="replication">
+  <div class="section-header">
+    <span class="section-num">&sect; 10</span>
+    <span class="section-title">Replication Protocol</span>
+  </div>
+  <p>Any researcher can apply this framework to a new domain using four steps:</p>
+  <table>
+    <thead><tr><th>Step</th><th>Action</th></tr></thead>
+    <tbody>
+      <tr><td class="result-cell">1. Domain</td><td>Any system where choice occurs under constraint and outcomes are measurable. Menu. Ballot. Job application. Registry. Census occupation record.</td></tr>
+      <tr><td class="result-cell">2. Four Measurements</td><td>Time (when did the pattern appear). Event (what was the structural constraint). Population (who was inside it). Decision or coincidence (&chi;&sup2; GOF or KS test against uniform).</td></tr>
+      <tr><td class="result-cell">3. Ceiling/Floor</td><td>Identify top cluster and bottom cluster. Calculate ratio. That ratio is C for that domain.</td></tr>
+      <tr><td class="result-cell">4. &epsilon; Check</td><td>After extracting C, identify what the model cannot explain. Who owns property inside maximum exclusion. Who orders the non-default. Who wins against the ceiling. Measure that remainder.</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ===== &sect;11 OPEN QUESTIONS ===== -->
+<div class="section" id="open">
+  <div class="section-header">
+    <span class="section-num">&sect; 11</span>
+    <span class="section-title">Open Questions</span>
+  </div>
+  <p>The following are hypotheses generated by confirmed findings. None asserted as proven. All require additional data and testing.</p>
+
+  <table>
+    <thead><tr><th>#</th><th>Question</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>Whether 39% is stable across additional domains and time periods beyond the two confirmed</td><td><span class="tag open">UNCONFIRMED</span></td></tr>
+      <tr><td>2</td><td>Whether money is the primary &Delta;S variable or one of several scale-shift mechanisms</td><td><span class="tag open">UNCONFIRMED</span></td></tr>
+      <tr><td>3</td><td>Whether removing the constraint produces a durable shift toward uniform or the convergence reinstates through a different mechanism</td><td><span class="tag open">UNCONFIRMED</span></td></tr>
+      <tr><td>4</td><td>Whether the COVID stimulus distribution shift followed by return to baseline constitutes a natural experiment for the constraint hypothesis</td><td><span class="tag open">UNCONFIRMED</span></td></tr>
+      <tr><td>5</td><td>Whether the 5,000-year civilizational timeline holds the same ceiling/floor ratio (Roman freedmen, Mesopotamian property, Atlantic mortality curves)</td><td><span class="tag open">UNCONFIRMED</span></td></tr>
+      <tr><td>6</td><td>Whether biological parity (50/50 birth rates, comparable life expectancy) across populations confirms that all deviation is structural, not biological</td><td><span class="tag open">UNCONFIRMED</span></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ===== &sect;12 WHAT WOULD BREAK THIS ===== -->
+<div class="section" id="falsification">
+  <div class="section-header">
+    <span class="section-num">&sect; 12</span>
+    <span class="section-title">Falsification Criteria</span>
+  </div>
+  <p>A valid null result in any domain would not break the study. It would refine it. What would break the thesis entirely:</p>
+  <table>
+    <thead><tr><th>Condition</th></tr></thead>
+    <tbody>
+      <tr><td>A constrained system where selection is demonstrably uniform across all options over a comparable time period</td></tr>
+      <tr><td>Evidence that the ceiling/floor ratio changes significantly when the constraint is removed</td></tr>
+      <tr><td>Replication of any confirmed test producing a failure to reject H&#8320; under identical conditions</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ===== &sect;13 SOURCES ===== -->
+<div class="section" id="sources">
+  <div class="section-header">
+    <span class="section-num">&sect; 13</span>
+    <span class="section-title">Primary Sources</span>
+  </div>
+  <ul class="source-list">
+    <li>Bertrand, M. &amp; Mullainathan, S. (2004). Are Emily and Greg More Employable than Lakisha and Jamal? NBER.</li>
+    <li>Quillian, L. et al. (2017). Meta-analysis of field experiments shows no change in racial discrimination. PNAS.</li>
+    <li>Edison Research / NEP Exit Poll (2024). National Election Pool.</li>
+    <li>AP VoteCast (2024). Associated Press.</li>
+    <li>Encyclop&aelig;dia Britannica. Haiti &mdash; Population and colonial history, 1789.</li>
+    <li>USDA Economic Research Service. Per capita chicken availability data, 2021&ndash;2024.</li>
+    <li>Nike, Inc. Annual Reports (2014&ndash;2024). Jordan Brand revenue disclosures.</li>
+    <li>California EDD. Weekly UI claims, March 2020 &ndash; February 2026.</li>
+    <li>Freedom House. Democracy scores, 2026.</li>
+    <li>Contested Freedom Dataset (CFDataFinal20201221.xlsx). Savannah GA antebellum records.</li>
+    <li>Gates, H. L. Jr. Transatlantic slave trade population statistics.</li>
+    <li>Fanon, F. (1963). The Wretched of the Earth.</li>
+    <li>C&eacute;saire, A. Discourse on Colonialism.</li>
+    <li>Chasteen, J. C. Born in Blood and Fire: A Concise History of Latin America.</li>
+    <li>Valley, J. (2025&ndash;2026). Field observation data: folkway violation study, suit compliance test, job search funnel. Berkeley City College.</li>
+    <li>Valley, J. (2026). Tender Greens Oakland PMIX cashier logs. 11 reports. Feb&ndash;Mar 2026.</li>
+    <li>Valley, J. (2026). Women World Leaders 2026 dataset. 22 heads of state.</li>
+  </ul>
+</div>
+
+<!-- ===== COLOPHON ===== -->
+<div class="colophon">
+  JAIR VALLEY &nbsp;&middot;&nbsp; HEYER LIVIN' &nbsp;&middot;&nbsp; BERKELEY CITY COLLEGE &nbsp;&middot;&nbsp; OAKLAND, CALIFORNIA &nbsp;&middot;&nbsp; MARCH 2026<br>
+  <strong>CHOICE IS NOT CHANCE &mdash; 13 TESTS. 0 CHANCE.</strong>
+</div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,420 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KairoGLYPH</title>
+<style>
+  :root{
+    --grain:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    --helv:"Helvetica Neue",Helvetica,Arial,"Segoe UI",sans-serif;
+    --white:#fff;--w-70:rgba(255,255,255,.70);--w-45:rgba(255,255,255,.45);
+    --edge:rgba(255,255,255,.10);--edge-soft:rgba(255,255,255,.06);
+    --cyan:#6fd2e2;--violet:#b9a6ff;--green:#74de7e;--amber:#e9bf63;--red:#f08079;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{height:100%;}
+  body{background:#000;color:var(--white);font-family:var(--helv);font-size:14px;
+    line-height:1.55;-webkit-font-smoothing:antialiased;letter-spacing:.1px;}
+  a{color:inherit;text-decoration:none;}
+  /* nav */
+  nav{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;
+    justify-content:space-between;gap:16px;padding:14px 22px;
+    background:rgba(0,0,0,.55);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);
+    border-bottom:1px solid var(--edge);}
+  .brand{display:flex;align-items:center;gap:11px;font-size:17px;font-weight:600;letter-spacing:-.2px;}
+  .brand svg{width:26px;height:26px;flex:none;}
+  .links{display:flex;gap:4px;flex-wrap:wrap;}
+  .links a{font-size:12.5px;color:var(--w-45);padding:7px 11px;border-radius:9px;}
+  .links a:hover{color:var(--white);background:rgba(255,255,255,.05);}
+  .links a.on{color:var(--white);background:rgba(255,255,255,.08);border:1px solid var(--edge);}
+  main{max-width:1140px;margin:0 auto;padding:92px 22px 70px;}
+  /* glass card */
+  .card{position:relative;border-radius:20px;overflow:hidden;
+    background:rgba(255,255,255,.055);border:1px solid rgba(255,255,255,.12);
+    -webkit-backdrop-filter:blur(26px) saturate(1.6);backdrop-filter:blur(26px) saturate(1.6);
+    box-shadow:0 1px 0 rgba(255,255,255,.22) inset,0 26px 64px -30px rgba(0,0,0,.95);}
+  .card::after{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+    background:linear-gradient(125deg,transparent 35%,rgba(255,255,255,.18) 46%,rgba(255,255,255,.04) 51%,transparent 61%),
+      linear-gradient(180deg,rgba(255,255,255,.12),transparent 22%),
+      radial-gradient(130% 100% at 10% -8%,var(--wash,rgba(111,210,226,.16)),transparent 62%);}
+  .card::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+    background-image:var(--grain);background-size:200px 200px;opacity:.3;mix-blend-mode:overlay;}
+  .card>*{position:relative;z-index:2;}
+  .card-edge{position:absolute;inset:0;border-radius:20px;padding:1px;z-index:3;pointer-events:none;
+    background:linear-gradient(135deg,rgba(255,255,255,.78),rgba(255,255,255,.12) 22%,rgba(255,255,255,0) 47%,rgba(255,255,255,.07) 61%,rgba(255,255,255,.4) 100%);
+    -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+    -webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+    mask-composite:exclude;}
+  .cyan{--wash:rgba(111,210,226,.18);}.violet{--wash:rgba(185,166,255,.18);}
+  .green{--wash:rgba(116,222,126,.16);}.amber{--wash:rgba(233,191,99,.16);}
+  /* type + layout */
+  h1{font-size:40px;font-weight:600;letter-spacing:-1px;line-height:1.1;}
+  h2{font-size:22px;font-weight:600;letter-spacing:-.3px;}
+  h3{font-size:15px;font-weight:600;}
+  .lede{color:var(--w-70);font-size:16px;}
+  .muted{color:var(--w-45);}
+  .eyebrow{font-size:11px;letter-spacing:1.4px;text-transform:uppercase;color:var(--w-45);}
+  .grid{display:grid;gap:14px;}
+  .g3{grid-template-columns:repeat(3,1fr);}.g4{grid-template-columns:repeat(4,1fr);}
+  .g2{grid-template-columns:repeat(2,1fr);}
+  .pad{padding:22px;}
+  section{margin-bottom:32px;}
+  .btn{display:inline-flex;align-items:center;gap:8px;font:inherit;font-size:13px;cursor:pointer;
+    padding:11px 18px;border-radius:12px;color:var(--white);background:rgba(255,255,255,.07);
+    border:1px solid var(--edge);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);}
+  .btn:hover{background:rgba(255,255,255,.12);}
+  .btn.accent{background:linear-gradient(135deg,rgba(111,210,226,.25),rgba(185,166,255,.25));border-color:rgba(255,255,255,.2);}
+  .metricval{font-size:32px;font-weight:600;letter-spacing:-.6px;}
+  .pill{display:inline-block;font-size:10.5px;padding:3px 9px;border-radius:999px;letter-spacing:.4px;}
+  .z-dominant{background:rgba(185,166,255,.16);color:var(--violet);}
+  .z-structural{background:rgba(111,210,226,.16);color:var(--cyan);}
+  .z-subordinated{background:rgba(233,191,99,.16);color:var(--amber);}
+  table{width:100%;border-collapse:collapse;font-size:13px;}
+  th,td{text-align:left;padding:10px 10px;border-bottom:1px solid var(--edge-soft);}
+  th{font-size:10.5px;letter-spacing:.6px;text-transform:uppercase;color:var(--w-45);font-weight:500;}
+  td.num{font-variant-numeric:tabular-nums;}
+  input{font:inherit;font-size:14px;width:100%;padding:12px 14px;border-radius:12px;
+    background:rgba(255,255,255,.05);border:1px solid var(--edge);color:var(--white);}
+  input:focus{outline:none;border-color:var(--cyan);}
+  .dot{width:8px;height:8px;border-radius:50%;display:inline-block;}
+  footer{max-width:1140px;margin:0 auto;padding:24px 22px 50px;color:var(--w-45);
+    font-size:12px;border-top:1px solid var(--edge-soft);}
+  @media(max-width:820px){.g3,.g4,.g2{grid-template-columns:1fr;}h1{font-size:30px;}}
+</style>
+</head>
+<body>
+<nav>
+  <a class="brand" href="/" data-route="home">
+    <svg viewBox="0 0 48 48" fill="none" aria-hidden="true">
+      <path d="M4 24C9 14 16 9 24 9s15 5 20 15c-5 10-12 15-20 15S9 34 4 24Z" stroke="#fff" stroke-width="1.7" stroke-linejoin="round"/>
+      <circle cx="24" cy="24" r="7.5" stroke="#fff" stroke-width="1.7"/><circle cx="24" cy="24" r="3.4" fill="#fff"/>
+    </svg>KairoGLYPH
+  </a>
+  <div class="links" id="nav-links"></div>
+</nav>
+<main id="view"></main>
+<footer>
+  KairoGLYPH — a structured-intelligence terminal. The ledger is the only intake;
+  GLYPH converts what enters it into events. R = x / (x + y²).
+</footer>
+<script>
+/* ---------- routes ---------- */
+var ROUTES = [
+  {id:"home",      path:"/",         label:"Home"},
+  {id:"research",  path:"/research", label:"Research", ext:true},
+  {id:"system",    path:"/system",   label:"System",   ext:true},
+  {id:"filing",    path:"/filing",   label:"Filing"},
+  {id:"dashboard", path:"/dashboard",label:"Dashboard"},
+  {id:"subscribe", path:"/subscribe",label:"Subscribe"},
+  {id:"about",     path:"/about",    label:"About"}
+];
+var BLOG_URL = "https://heyerlivin.com/blog";
+
+/* ---------- fallback data (the loaded Jonah Study; used when /api is offline) ---------- */
+var FALLBACK_EVENTS = [
+  ["PMIX Tender Greens",0.4013,"Consumer behavior"],["Savannah Craftsman-Field",0.3916,"Historical labor"],
+  ["Women World Leaders",0.397,"Political representation"],["Callback Discrimination",0.40,"Labor market"],
+  ["EDD Unemployment",0.3834,"Unemployment claims"],["Egypt (BCDE)",0.38,"Civilization"],
+  ["Rome (BCDE)",0.35,"Civilization"],["Persia (BCDE)",0.37,"Civilization"],
+  ["Maya (BCDE)",0.407,"Civilization"],["Electoral Ceiling",0.43,"Electoral politics"],
+  ["Jordan Brand",0.39,"Consumer market"],["Savannah Abolitionary",0.3916,"Historical labor"]
+].map(function(d){
+  var r=d[1], zone = r<0.33?"SUBORDINATED":(r<=0.50?"STRUCTURAL":"DOMINANT");
+  return {record_id:d[0], domain:d[2], r_value:r, zone:zone};
+});
+var FALLBACK_CONTENT = {
+  home:[
+    {section:"hero",title:"KairoGLYPH",body:"A structured-intelligence terminal. Pour in unstructured life — money, health, work, history, culture — and read back structured events."},
+    {section:"how-it-works",title:"How it works",body:"Anything you submit enters the ledger. GLYPH converts it into events with a domain, a structural ratio R, and a band. The terminal shows them."}
+  ],
+  research:[
+    {section:"overview",title:"The Jonah Study",body:"Cross-Domain Convergence of Distributional Ratios in Choice-Absent Systems. Across 12 datasets the structural constraint ratio R = x / (x + y²) converges to a grand mean of 0.390992 (SD 0.019778, p < 0.001)."},
+    {section:"sources",title:"Sources",body:"Datasets span consumer behavior, historical labor, political representation, labor-market discrimination, unemployment claims, and ancient civilizations. Author: Jair Valley, Heyer Livin LLC, Berkeley City College."}
+  ],
+  filing:[{section:"overview",title:"Filing",body:"Structural records drawn from the repository and the running application — schemas, the append-only ledger, and the system's own state."}],
+  about:[{section:"mission",title:"About KairoGLYPH",body:"KairoGLYPH is a terminal for one person or one small business — a Bloomberg terminal for a life. It does not own truth; it records it, classifies it, and shows it, with provenance kept and absence treated as a record."}],
+  subscribe:[{section:"pitch",title:"Subscribe",body:"Create an account to open your personal dashboard — your own intake, your own events, your own terminal."}]
+};
+
+/* ---------- data helpers ---------- */
+function api(path){
+  return fetch(path,{headers:{"Accept":"application/json"}})
+    .then(function(r){ if(!r.ok) throw new Error(r.status); return r.json(); });
+}
+function loadEvents(){
+  return api("/api/events?limit=200").then(function(d){
+    return (d.events&&d.events.length)? d.events : FALLBACK_EVENTS;
+  }).catch(function(){ return FALLBACK_EVENTS; });
+}
+function loadContent(route){
+  return api("/api/content/"+route).then(function(d){
+    return (d.sections&&d.sections.length)? d.sections : FALLBACK_CONTENT[route]||[];
+  }).catch(function(){ return FALLBACK_CONTENT[route]||[]; });
+}
+function sectionMap(list){ var m={}; (list||[]).forEach(function(s){m[s.section]=s;}); return m; }
+function esc(s){ return String(s==null?"":s).replace(/[&<>]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;"}[c];}); }
+function zoneClass(z){ return "z-"+String(z||"").toLowerCase(); }
+function mean(a){ return a.length? a.reduce(function(x,y){return x+y;},0)/a.length : 0; }
+
+/* ---- glyphs : the KairoGLYPH visual marks ----
+   eye = the brand mark; one mark per classification band. */
+function glyph(name,size){
+  size=size||14;
+  var p={
+    eye:'<path d="M2 12C5 6 9 4 12 4s7 2 10 8c-3 6-7 8-10 8S5 18 2 12Z"/><circle cx="12" cy="12" r="3.6"/><circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none"/>',
+    unmeasured:'<circle cx="12" cy="12" r="8" stroke-dasharray="3 3"/>',
+    subordinated:'<circle cx="12" cy="12" r="7.5"/><circle cx="12" cy="16" r="2" fill="currentColor" stroke="none"/>',
+    structural:'<circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2.4" fill="currentColor" stroke="none"/><path d="M12 1.6v3.2M12 19.2v3.2M1.6 12h3.2M19.2 12h3.2"/>',
+    dominant:'<path d="M12 2.5v5M12 16.5v5M2.5 12h5M16.5 12h5M5.4 5.4l3.4 3.4M15.2 15.2l3.4 3.4M18.6 5.4l-3.4 3.4M8.8 15.2l-3.4 3.4"/><circle cx="12" cy="12" r="2.8" fill="currentColor" stroke="none"/>'
+  };
+  var inner=p[String(name||"").toLowerCase()]||p.eye;
+  return '<svg viewBox="0 0 24 24" width="'+size+'" height="'+size+'" fill="none" '
+    +'stroke="currentColor" stroke-width="1.6" stroke-linecap="round" '
+    +'style="vertical-align:-2px;flex:none;" aria-hidden="true">'+inner+'</svg>';
+}
+function zoneBadge(zone){
+  return '<span class="pill '+zoneClass(zone)+'" style="display:inline-flex;align-items:center;gap:5px;">'
+    + glyph(zone,12) + esc(zone) + '</span>';
+}
+
+/* ---------- views ---------- */
+function viewHome(c){
+  var m=sectionMap(c), hero=m.hero||{}, how=m["how-it-works"]||{};
+  return ''
+  +'<section style="text-align:center;padding:34px 0 14px;">'
+  +'<div style="color:var(--cyan);margin-bottom:14px;">'+glyph("eye",58)+'</div>'
+  +'<div class="eyebrow">structured-intelligence terminal</div>'
+  +'<h1 style="margin:14px 0 16px;">'+esc(hero.title||"KairoGLYPH")+'</h1>'
+  +'<p class="lede" style="max-width:640px;margin:0 auto 24px;">'+esc(hero.body||"")+'</p>'
+  +'<a class="btn accent" href="/subscribe" data-route="subscribe">Open a dashboard</a> '
+  +'<a class="btn" href="/research" data-route="research">See the research</a>'
+  +'</section>'
+  +'<section class="grid g3">'
+  + card("cyan","Universal intake","One door — the ledger. Submit anything: a number, a record, a note. No forms.")
+  + card("violet","Deterministic structure","GLYPH computes R = x / (x + y²) and a band. Same engine for a dollar and a finding.")
+  + card("green","Provenance &amp; absence","Every event shows where it came from. What is missing is recorded, never inferred.")
+  +'</section>'
+  +'<section><div class="card cyan"><div class="pad">'
+  +'<div class="eyebrow">how it works</div><h2 style="margin:8px 0 8px;">'+esc(how.title||"How it works")+'</h2>'
+  +'<p class="lede">'+esc(how.body||"")+'</p></div></div></section>';
+}
+function card(wash,title,body){
+  return '<div class="card '+wash+'"><div class="pad"><h3>'+title+'</h3>'
+    +'<p class="muted" style="margin-top:7px;font-size:13px;">'+body+'</p></div></div>';
+}
+
+function viewResearch(c,events){
+  var m=sectionMap(c), ov=m.overview||{}, src=m.sources||{};
+  var rs=events.map(function(e){return Number(e.r_value);});
+  var gm=mean(rs);
+  var rows=events.map(function(e){
+    return '<tr><td>'+esc(e.record_id)+'</td><td class="muted">'+esc(e.domain)+'</td>'
+      +'<td class="num">'+Number(e.r_value).toFixed(4)+'</td>'
+      +'<td>'+zoneBadge(e.zone)+'</td></tr>';
+  }).join("");
+  return ''
+  +'<section><div class="eyebrow">research</div>'
+  +'<h1 style="margin:12px 0 14px;">'+esc(ov.title||"The Jonah Study")+'</h1>'
+  +'<p class="lede" style="max-width:760px;">'+esc(ov.body||"")+'</p></section>'
+  +'<section class="grid g3">'
+  + metric("violet","grand mean R",gm.toFixed(6),"across "+events.length+" datasets")
+  + metric("cyan","equation","R = x / (x + y²)","structural constraint ratio")
+  + metric("green","convergence","0.39","the structural attractor")
+  +'</section>'
+  +'<section><div class="card cyan"><div class="pad">'
+  +'<h2 style="margin-bottom:4px;">Datasets</h2>'
+  +'<p class="muted" style="font-size:12px;margin-bottom:10px;">Every dataset, every domain — the ratio holds.</p>'
+  +'<table><thead><tr><th>record</th><th>domain</th><th>R</th><th>band</th></tr></thead><tbody>'+rows+'</tbody></table>'
+  +'</div></div></section>'
+  + rPlot(events)
+  +'<section><div class="card violet"><div class="pad">'
+  +'<h3>'+esc(src.title||"Sources")+'</h3><p class="muted" style="margin-top:7px;font-size:13px;">'+esc(src.body||"")+'</p>'
+  +'</div></div></section>';
+}
+function metric(wash,label,val,note){
+  return '<div class="card '+wash+'"><div class="pad">'
+    +'<div class="eyebrow">'+label+'</div>'
+    +'<div class="metricval" style="margin:8px 0 4px;">'+val+'</div>'
+    +'<div class="muted" style="font-size:12px;">'+note+'</div></div></div>';
+}
+function rPlot(events){
+  var W=1040,H=210,pad=44;
+  var pts=events.map(function(e,i){
+    var x=pad+i*((W-2*pad)/Math.max(1,events.length-1));
+    var r=Number(e.r_value);
+    var y=H-pad-((r-0.30)/(0.50-0.30))*(H-2*pad);
+    return {x:x,y:Math.max(pad,Math.min(H-pad,y)),r:r,name:e.record_id};
+  });
+  var attractorY=H-pad-((0.39-0.30)/(0.50-0.30))*(H-2*pad);
+  var dots=pts.map(function(p){return '<circle cx="'+p.x.toFixed(1)+'" cy="'+p.y.toFixed(1)+'" r="4.5" fill="#6fd2e2"/>';}).join("");
+  return '<section><div class="card cyan"><div class="pad">'
+   +'<h3 style="margin-bottom:10px;">R distribution — convergence on 0.39</h3>'
+   +'<svg viewBox="0 0 '+W+' '+H+'" width="100%" aria-hidden="true">'
+   +'<line x1="'+pad+'" y1="'+attractorY.toFixed(1)+'" x2="'+(W-pad)+'" y2="'+attractorY.toFixed(1)+'" stroke="#b9a6ff" stroke-dasharray="5 5" stroke-width="1.4"/>'
+   +'<text x="'+(W-pad)+'" y="'+(attractorY-9).toFixed(1)+'" text-anchor="end" fill="#b9a6ff" font-size="11" font-family="Helvetica">attractor 0.39</text>'
+   +'<line x1="'+pad+'" y1="'+(H-pad)+'" x2="'+(W-pad)+'" y2="'+(H-pad)+'" stroke="rgba(255,255,255,.14)"/>'
+   +dots
+   +'<text x="'+pad+'" y="'+(H-pad+18)+'" fill="rgba(255,255,255,.4)" font-size="10" font-family="Helvetica">0.30</text>'
+   +'<text x="'+pad+'" y="'+(pad-8)+'" fill="rgba(255,255,255,.4)" font-size="10" font-family="Helvetica">0.50</text>'
+   +'</svg></div></div></section>';
+}
+function domainBars(events){
+  var by={};
+  events.forEach(function(e){ by[e.domain]=by[e.domain]||{n:0,sum:0}; by[e.domain].n++; by[e.domain].sum+=Number(e.r_value); });
+  var doms=Object.keys(by).sort(function(a,b){return by[b].n-by[a].n;});
+  var max=Math.max.apply(null,doms.map(function(d){return by[d].n;}))||1;
+  var rows=doms.map(function(d){
+    var w=(by[d].n/max*100).toFixed(1), mr=(by[d].sum/by[d].n).toFixed(3);
+    return '<div style="margin-bottom:11px;">'
+      +'<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px;">'
+      +'<span class="muted">'+esc(d)+'</span>'
+      +'<span>'+by[d].n+' &middot; <span class="muted">R '+mr+'</span></span></div>'
+      +'<div style="height:9px;border-radius:5px;background:rgba(255,255,255,.06);overflow:hidden;">'
+      +'<div style="height:100%;width:'+w+'%;background:linear-gradient(90deg,#6fd2e2,#b9a6ff);border-radius:5px;"></div>'
+      +'</div></div>';
+  }).join("");
+  return '<section><div class="card violet"><div class="pad">'
+    +'<h3 style="margin-bottom:14px;">Events by domain</h3>'+rows+'</div></div></section>';
+}
+
+function viewDashboard(events){
+  var rs=events.map(function(e){return Number(e.r_value);});
+  var zc={DOMINANT:0,STRUCTURAL:0,SUBORDINATED:0};
+  events.forEach(function(e){ if(zc[e.zone]!=null) zc[e.zone]++; });
+  var rows=events.slice(0,12).map(function(e){
+    return '<tr><td>'+esc(e.record_id)+'</td><td class="muted">'+esc(e.domain)+'</td>'
+      +'<td class="num">'+Number(e.r_value).toFixed(4)+'</td>'
+      +'<td>'+zoneBadge(e.zone)+'</td></tr>';
+  }).join("");
+  return ''
+  +'<section><div class="eyebrow">terminal</div><h1 style="margin:12px 0 6px;">Dashboard</h1>'
+  +'<p class="muted">Live read of the event ledger.</p></section>'
+  +'<section class="grid g4">'
+  + metric("cyan","events",String(events.length),"glyph events")
+  + metric("violet","mean R",mean(rs).toFixed(4),"structural ratio")
+  + metric("green","structural",String(zc.STRUCTURAL),"in-band events")
+  + metric("amber","dominant",String(zc.DOMINANT),"above 0.50")
+  +'</section>'
+  + rPlot(events)
+  + domainBars(events)
+  +'<section><div class="card cyan"><div class="pad">'
+  +'<h2 style="margin-bottom:10px;">Action Router — events</h2>'
+  +'<table><thead><tr><th>record</th><th>domain</th><th>R</th><th>band</th></tr></thead><tbody>'+rows+'</tbody></table>'
+  +'</div></div></section>'
+  +'<section><div class="card violet"><div class="pad">'
+  +'<h3>Chain</h3><p class="muted" style="font-size:13px;margin-top:7px;">'
+  +'Raw Event &rarr; Ledger Scout &rarr; XY Splitter &rarr; Constraint Accountant &rarr; Action Router &rarr; Terminal Output. '
+  +'Mutation is blocked; the terminal reads, it never writes.</p></div></div></section>';
+}
+
+function viewFiling(c){
+  var m=sectionMap(c), ov=m.overview||{};
+  return ''
+  +'<section><div class="eyebrow">filing</div><h1 style="margin:12px 0 14px;">'+esc(ov.title||"Filing")+'</h1>'
+  +'<p class="lede" style="max-width:720px;">'+esc(ov.body||"")+'</p></section>'
+  +'<section class="grid g2">'
+  + card("cyan","Schemas","raw_event, glyph_event, absence_record, ledger_entry — the GLYPH record types, expressed as durable tables.")
+  + card("violet","Append-only ledger","Every record is chained by hash to the one before it. Tamper-evident, replay-verifiable.")
+  +'</section>';
+}
+
+function viewSubscribe(c){
+  var m=sectionMap(c), p=m.pitch||{};
+  return ''
+  +'<section style="max-width:520px;margin:0 auto;text-align:center;">'
+  +'<div class="eyebrow">subscribe</div><h1 style="margin:12px 0 12px;">'+esc(p.title||"Subscribe")+'</h1>'
+  +'<p class="lede" style="margin-bottom:22px;">'+esc(p.body||"")+'</p>'
+  +'<div class="card cyan"><div class="pad">'
+  +'<input id="sub-email" type="email" placeholder="you@example.com" autocomplete="email">'
+  +'<button class="btn accent" id="sub-go" style="width:100%;justify-content:center;margin-top:12px;">Create my dashboard</button>'
+  +'<div id="sub-msg" class="muted" style="font-size:12px;margin-top:12px;min-height:16px;"></div>'
+  +'</div></div></section>';
+}
+function wireSubscribe(){
+  var go=document.getElementById("sub-go"); if(!go) return;
+  go.addEventListener("click",function(){
+    var email=(document.getElementById("sub-email").value||"").trim();
+    var msg=document.getElementById("sub-msg");
+    if(email.indexOf("@")<0){ msg.textContent="Enter a valid email."; return; }
+    msg.textContent="Creating…";
+    fetch("/api/subscribe",{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({email:email})})
+      .then(function(r){return r.json();})
+      .then(function(d){
+        if(d.dashboard_path){ msg.innerHTML='Subscribed. Your dashboard: <code>'+esc(d.dashboard_path)+'</code>'; }
+        else { msg.textContent=d.error||"Could not subscribe."; }
+      })
+      .catch(function(){ msg.textContent="Service offline — subscription will work once KairoGLYPH is deployed."; });
+  });
+}
+
+function viewAbout(c){
+  var m=sectionMap(c), ms=m.mission||{};
+  return ''
+  +'<section><div class="eyebrow">about</div><h1 style="margin:12px 0 14px;">'+esc(ms.title||"About KairoGLYPH")+'</h1>'
+  +'<p class="lede" style="max-width:720px;">'+esc(ms.body||"")+'</p></section>'
+  +'<section class="grid g3">'
+  + card("cyan","Read-only","The terminal renders the ledger. It never deletes, publishes, or mutates.")
+  + card("violet","Provenance kept","Timestamps, schema versions and sources travel with every event.")
+  + card("green","Absence is a record","What was expected but not seen is logged, not silently dropped.")
+  +'</section>';
+}
+
+/* ---------- render + router ---------- */
+function setActive(id){
+  var nav=document.getElementById("nav-links");
+  nav.innerHTML = ROUTES.map(function(r){
+    if(r.ext) return '<a href="'+r.path+'">'+r.label+'</a>';
+    return '<a href="'+r.path+'" data-route="'+r.id+'" class="'+(r.id===id?"on":"")+'">'+r.label+'</a>';
+  }).join("") + '<a href="'+BLOG_URL+'" target="_blank" rel="noopener">Blog &#8599;</a>';
+}
+function addEdges(){
+  document.querySelectorAll(".card").forEach(function(c){
+    if(c.querySelector(":scope > .card-edge")) return;
+    var e=document.createElement("div"); e.className="card-edge"; c.appendChild(e);
+  });
+}
+function render(id){
+  setActive(id);
+  var view=document.getElementById("view");
+  view.innerHTML='<p class="muted" style="padding:40px 0;">Loading…</p>';
+  window.scrollTo(0,0);
+  if(id==="research"||id==="dashboard"){
+    loadEvents().then(function(events){
+      if(id==="research"){
+        loadContent("research").then(function(c){ view.innerHTML=viewResearch(c,events); addEdges(); });
+      } else { view.innerHTML=viewDashboard(events); addEdges(); }
+    });
+  } else {
+    loadContent(id).then(function(c){
+      if(id==="home")      view.innerHTML=viewHome(c);
+      else if(id==="filing")    view.innerHTML=viewFiling(c);
+      else if(id==="subscribe"){view.innerHTML=viewSubscribe(c); wireSubscribe();}
+      else if(id==="about")     view.innerHTML=viewAbout(c);
+      else view.innerHTML=viewHome(c);
+      addEdges();
+    });
+  }
+}
+function routeIdFromPath(){
+  var p=location.pathname.replace(/\/+$/,"")||"/";
+  var match=ROUTES.filter(function(r){return r.path===p;})[0];
+  if(match) return match.id;
+  for(var i=0;i<ROUTES.length;i++){ if(ROUTES[i].id!=="home" && p.indexOf("/"+ROUTES[i].id)===0) return ROUTES[i].id; }
+  return "home";
+}
+function go(id,push){
+  var r=ROUTES.filter(function(x){return x.id===id;})[0]||ROUTES[0];
+  if(push) try{ history.pushState({},"",r.path); }catch(e){}
+  render(id);
+}
+document.addEventListener("click",function(ev){
+  var a=ev.target.closest("a[data-route]"); if(!a) return;
+  ev.preventDefault(); go(a.getAttribute("data-route"),true);
+});
+window.addEventListener("popstate",function(){ render(routeIdFromPath()); });
+render(routeIdFromPath());
+</script>
+</body>
+</html>

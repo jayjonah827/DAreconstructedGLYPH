@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Research â Heyer Livin</title>
+  <style>
+    /* Reset & Variables */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --color-bg-primary: #0a0a0a;
+      --color-bg-secondary: #111111;
+      --color-bg-tertiary: #1a1a1a;
+      --color-bg-quaternary: #242424;
+      --color-text-primary: #f5f5f5;
+      --color-text-muted: #888888;
+      --color-border: #2e2e2e;
+      --color-accent-primary: #2c5f2d;
+      --color-accent-light: #4a9e4d;
+      --color-accent-dark: #1e4220;
+      --font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      --spacing-xs: 0.5rem;
+      --spacing-sm: 1rem;
+      --spacing-md: 1.5rem;
+      --spacing-lg: 2rem;
+      --spacing-xl: 3rem;
+      --spacing-2xl: 4rem;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: var(--font-family);
+      background-color: var(--color-bg-primary);
+      color: var(--color-text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* Navigation */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background-color: var(--color-bg-primary);
+      border-bottom: 1px solid var(--color-border);
+      padding: var(--spacing-md) var(--spacing-lg);
+      backdrop-filter: blur(10px);
+      background-color: rgba(10, 10, 10, 0.95);
+    }
+
+    nav .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--spacing-lg);
+    }
+
+    nav .logo {
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      display: flex;
+      gap: 0.25rem;
+    }
+
+    nav .logo .heyer {
+      color: var(--color-text-primary);
+    }
+
+    nav .logo .livin {
+      color: var(--color-accent-light);
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: var(--spacing-lg);
+      align-items: center;
+    }
+
+    nav a {
+      color: var(--color-text-muted);
+      text-decoration: none;
+      font-size: 0.95rem;
+      transition: color 0.3s ease;
+    }
+
+    nav a:hover {
+      color: var(--color-accent-light);
+    }
+
+    nav a.active {
+      color: var(--color-accent-light);
+      border-bottom: 2px solid var(--color-accent-light);
+      padding-bottom: 0.25rem;
+    }
+
+    /* Hero Section */
+    .hero {
+      padding: var(--spacing-2xl) var(--spacing-lg);
+      text-align: center;
+      background: linear-gradient(135deg, var(--color-bg-secondary) 0%, var(--color-bg-tertiary) 100%);
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .hero-container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .hero-eyebrow {
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--color-accent-light);
+      margin-bottom: var(--spacing-sm);
+    }
+
+    .hero h1 {
+      font-size: clamp(2rem, 6vw, 3.5rem);
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: var(--spacing-md);
+      letter-spacing: -0.02em;
+    }
+
+    .hero p {
+      font-size: clamp(1rem, 2.5vw, 1.25rem);
+      color: var(--color-text-muted);
+      margin-bottom: var(--spacing-xl);
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.7;
+    }
+
+    .hero-cta {
+      display: inline-block;
+      background-color: var(--color-accent-light);
+      color: #000000;
+      padding: 0.75rem 1.75rem;
+      border-radius: 0;
+      border: none;
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      cursor: pointer;   margin-left: auto;
+      margin-right: auto;
+      line-height: 1.7;
+    }
+
+    .hero-cta {
+      display: inline-block;
+      background-color: var(--color-accent-light);
+      color: #000000;
+      padding: 0.75rem 1.75rem;
+      border-radius: 0;
+      border: none;
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .hero-cta:hover {
+      background-color: var(--color-accent-primary);
+      transform: translateY(-2px);
+    }
+
+    /* Section Styles */
+    section {
+      padding: var(--spacing-2xl) var(--spacing-lg);
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .section-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--color-accent-light);
+      margin-bottom: var(--spacing-md);
+    }
+
+    .section-title {
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      font-weight: 800;
+      margin-bottom: var(--spacing-lg);
+      letter-spacing: -0.02em;
+    }
+
+    /* Architecture List */
+    .architecture-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-md);
+      margin-top: var(--spacing-lg);
+    }
+
+    .architecture-item {
+      display: flex;
+      gap: var(--spacing-lg);
+      padding: var(--spacing-md);
+      background-color: var(--color-bg-secondary);
+      border-left: 3px solid var(--color-accent-light);
+      border: 1px solid var(--color-border);
+      border-top: 3px solid var(--color-accent-light);
+      transition: background-color 0.3s ease;
+    }
+
+    .architecture-item:hover {
+      background-color: var(--color-bg-tertiary);
+    }
+
+    .architecture-item-number {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 2.5rem;
+      height: 2.5rem;
+      background-color: var(--color-accent-light);
+      color: #000000;
+      border-radius: 0;
+      font-weight: 800;
+      font-size: 1.25rem;
+    }
+
+    .architecture-item-content h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.01em;
+    }
+
+    .architecture-item-content p {
+      font-size: 0.95rem;
+      color: var(--color-text-muted);
+    }
+
+    /* Core Equation Section */
+    .core-equation {
+      background-color: var(--color-bg-secondary);
+      padding: var(--spacing-2xl) var(--spacing-lg);
+      border: 1px solid var(--color-border);
+      border-top: 3px solid var(--color-accent-light);
+      margin-top: var(--spacing-lg);
+    }
+
+    .core-equation-display {
+      text-align: center;
+    }
+
+    .core-equation-formula {
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 800;
+      color: var(--color-accent-light);
+      margin-bottom: var(--spacing-lg);
+      letter-spacing: -0.02em;
+    }
+
+    .core-equation-explanation {
+      font-size: 1.05rem;
+      color: var(--color-text-muted);
+      margin-bottom: var(--spacing-md);
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .core-equation-note {
+      font-size: 0.95rem;
+      color: var(--color-accent-light);
+      font-weight: 600;
+    }
+
+    /* Grid Sections */
+    .grid-3col {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: var(--spacing-lg);
+      margin-top: var(--spacing-lg);
+    }
+
+    .card {
+      background-color: var(--color-bg-secondary);
+      padding: var(--spacing-lg);
+      border: 1px solid var(--color-border);
+      border-top: 3px solid var(--color-accent-light);
+      transition: transform 0.3s ease, background-color 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      background-color: var(--color-bg-tertiary);
+    }
+
+    .card h3 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: var(--spacing-md);
+      color: var(--color-accent-light);
+    }
+
+    .card p {
+      font-size: 0.95rem;
+      color: var(--color-text-muted);
+      line-height: 1.7;
+    }
+
+    /* Two-Column Section */
+    .two-column {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: var(--spacing-xl);
+      margin-top: var(--spacing-lg);
+    }
+
+    .column {
+      background-color: var(--color-bg-secondary);
+      padding: var(--spacing-lg);
+      border: 1px solid var(--color-border);
+      border-top: 3px solid var(--color-accent-light);
+    }
+
+    .column h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: var(--spacing-md);
+      color: var(--color-accent-light);
+    }
+
+    .column p {
+      font-size: 0.95rem;
+      color: var(--color-text-muted);
+      line-height: 1.8;
+    }
+
+    /* Callout */
+    .callout {
+      background-color: var(--color-bg-tertiary);
+      border-left: 4px solid var(--color-accent-light);
+      padding: var(--spacing-lg);
+      margin-top: var(--spacing-xl);
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--color-accent-light);
+      text-align: center;
+    }
+
+    /* Footer */
+    footer {
+      background-color: var(--color-bg-secondary);
+      border-top: 1px solid var(--color-border);
+      padding: var(--spacing-2xl) var(--spacing-lg);
+      text-align: center;
+    }
+
+    footer .footer-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .founder-info {
+      font-size: 0.9rem;
+      color: var(--color-text-muted);
+      margin-bottom: var(--spacing-md);
+    }
+
+    .founder-name {
+      color: var(--color-accent-light);
+      font-weight: 600;
+    }
+
+    .footer-divider {
+      height: 1px;
+      background-color: var(--color-border);
+      margin: var(--spacing-lg) 0;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: var(--spacing-lg);
+      flex-wrap: wrap;
+      font-size: 0.85rem;
+    }
+
+    .footer-links a {
+      color: var(--color-text-muted);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .footer-links a:hover {
+      color: var(--color-accent-light);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      nav .nav-container {
+        flex-direction: column;
+        gap: var(--spacing-md);
+      }
+
+      nav ul {
+        flex-direction: column;
+        gap: var(--spacing-md);
+      }
+
+      .architecture-item {
+        flex-direction: column;
+      }
+
+      .architecture-item-number {
+        width: 2rem;
+        height: 2rem;
+        font-size: 1rem;
+      }
+
+      .two-column {
+        grid-template-columns: 1fr;
+      }
+
+      .grid-3col {
+        grid-template-columns: 1fr;
+      }
+
+      .footer-links {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+      }
+    }
+
+    @media (max-width: 480px) {
+      nav .logo {
+        font-size: 1.25rem;
+      }
+
+      nav a {
+        font-size: 0.85rem;
+      }
+
+      section {
+        padding: var(--spacing-xl) var(--spacing-sm);
+      }
+
+      .hero {
+        padding: var(--spacing-xl) var(--spacing-sm);
+      }
+
+      .hero h1 {
+        font-size: 1.75rem;
+      }
+
+      .hero p {
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav>
+    <div class="nav-container">
+      <div class="logo">
+        <span class="heyer">Heyer</span>
+        <span class="livin">Livin</span>
+      </div>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="scholarship.html">Scholarship</a></li>
+        <li><a href="filing.html">Filing</a></li>
+        <li><a href="research.html" class="active">Research</a></li>
+        <li><a href="https://heyerlivin.com" target="_blank">Store</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-container">
+      <div class="hero-eyebrow">HeyerLivin â Research Architecture</div>
+      <h1>The Glyph system. Structure made visible.</h1>
+      <p>A standardized event architecture for measuring cycles, recording state change, and building cultural memory across domains.</p>
+      <a href="#architecture" class="hero-cta">Explore the Architecture</a>
+    </div>
+  </section>
+
+  <!-- Architecture Section -->
+  <section id="architecture">
+    <div class="section-container">
+      <div class="section-label">Architecture</div>
+      <h2 class="section-title">The Glyph Event Record</h2>
+      <p style="font-size: 1rem; color: var(--color-text-muted); margin-bottom: var(--spacing-lg); max-width: 800px;">The glyph event record is the fundamental unit of the Heyer Livin system. It is a standardized data structure designed to capture one complete event cycle. Each record is self-contained, comparable, and domain-portable.</p>
+
+      <div class="architecture-list">
+        <div class="architecture-item">
+          <div class="architecture-item-number">1</div>
+          <div class="architecture-item-content">
+            <h3>Cycle Definition</h3>
+            <p>The bounded event window being observed</p>
+          </div>
+        </div>
+
+        <div class="architecture-item">
+          <div class="architecture-item-number">2</div>
+          <div class="architecture-item-content">
+            <h3>Irreversible Event</h3>
+            <p>The decisive state change within the cycle</p>
+          </div>
+        </div>
+
+        <div class="architecture-item">
+          <div class="architecture-item-number">3</div>
+          <div class="architecture-item-content">
+            <h3>Derived Metrics</h3>
+            <p>Ratios and measurements computed from the event</p>
+          </div>
+        </div>
+
+        <div class="architecture-item">
+          <div class="architecture-item-number">4</div>
+          <div class="architecture-item-content">
+            <h3>Routing / Status</h3>
+            <p>Where the record sits in the system pipeline</p>
+          </div>
+        </div>
+
+        <div class="architecture-item">
+          <div class="architecture-item-number">5</div>
+          <div class="architecture-item-content">
+            <h3>Snapshot / Versioning</h3>
+            <p>Point-in-time state preservation</p>
+          </div>
+        </div>
+
+        <div class="architecture-item">
+          <div class="architecture-item-number">6</div>
+          <div class="architecture-item-content">
+            <h3>Relations</h3>
+            <p>Links to other records, domains, or system layers</p>
+          </div>
+        </div>
+
+        <div class="architecture-item">
+          <div class="architecture-item-number">7</div>
+          <div class="architecture-item-content">
+            <h3>Notes</h3>
+            <p>Context, interpretation, and researcher annotations</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Core Equation Section -->
+  <section>
+    <div class="section-container">
+      <div class="core-equation">
+        <div class="core-equation-display">
+          <div class="core-equation-formula">Self + Interaction = Reality</div>
+          <p class="core-equation-explanation">Self is the prior state. Interaction is the event. Reality is the new information produced by that exchange.</p>
+          <p class="core-equation-note">This is not a metaphor. It is the structural description of how each glyph event record is generated.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Cross-Domain Application Section -->
+  <section>
+    <div class="section-container">
+      <div class="section-label">Application</div>
+      <h2 class="section-title">Cross-Domain Application</h2>
+
+      <div class="grid-3col">
+        <div class="card">
+          <h3>Research</h3>
+          <p>Structured event recording for observation-based study across social science, cultural analysis, and interdisciplinary inquiry.</p>
+        </div>
+
+        <div class="card">
+          <h3>Simulations</h3>
+          <p>The glyph record architecture provides the foundation for computational modeling of constrained systems and event-cycle measurement.</p>
+        </div>
+
+        <div class="card">
+          <h3>Language & Art</h3>
+          <p>Tools for interpreting symbolic meaning, narrative structure, and expressive output through the standardized event record.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- From Classical to Quantum Section -->
+  <section>
+    <div class="section-container">
+      <div class="section-label">Evolution</div>
+      <h2 class="section-title">From Classical to Quantum</h2>
+
+      <div class="two-column">
+        <div class="column">
+          <h3>Glyph-8 (Classical)</h3>
+          <p>The classical simulation engine. Runs event cycles across domains. Counts outcomes. Observes where distributions land. Empirical measurement across structured trials.</p>
+        </div>
+
+        <div class="column">
+          <h3>Glyph-Q (Quantum)</h3>
+          <p>The quantum constraint architecture. Reframes the event cycle as a Hamiltonian operator. The structural attractor is not approximated but derived as a ground state eigenvalue. The classical result is not counted. It is explained.</p>
+        </div>
+      </div>
+
+      <div class="callout">
+        Glyph-8 demonstrated that the attractor exists. Glyph-Q explains why it must.
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-container">
+      <div class="founder-info">
+        Founded and maintained by <span class="founder-name">Jair Valley</span> at <span class="founder-name">Heyer Livin LLC</span>
+      </div>
+      <div class="footer-divider"></div>
+      <div class="footer-links">
+        <a href="https://heyerlivin.com">heyerlivin.com</a>
+        <a href="https://github.com/jayjonah827">GitHub</a>
+        <a href="mailto:jair@heyerlivin.com">Contact</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

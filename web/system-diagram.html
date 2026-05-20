@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Jonah Study — Full System Architecture</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Georgia', 'Times New Roman', serif;
+    background: #0a0a0f;
+    color: #e8e8e8;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  .diagram-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 24px 60px;
+  }
+
+  .title-block {
+    text-align: center;
+    margin-bottom: 48px;
+    border-bottom: 1px solid #333;
+    padding-bottom: 24px;
+  }
+  .title-block h1 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #fff;
+    margin-bottom: 6px;
+  }
+  .title-block .subtitle {
+    font-size: 0.95rem;
+    color: #888;
+    font-style: italic;
+  }
+  .title-block .author {
+    font-size: 0.85rem;
+    color: #666;
+    margin-top: 8px;
+  }
+
+  /* ---- TIER STYLING ---- */
+  .tier {
+    margin-bottom: 12px;
+    position: relative;
+  }
+  .tier-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #555;
+    margin-bottom: 14px;
+    padding-left: 4px;
+  }
+
+  /* ---- TIER 1: DATASETS ---- */
+  .dataset-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .dataset-card {
+    background: #14141c;
+    border: 1px solid #252530;
+    border-radius: 6px;
+    padding: 10px 12px;
+    position: relative;
+    transition: border-color 0.2s, background 0.2s;
+    cursor: default;
+  }
+  .dataset-card:hover {
+    border-color: #4a6fa5;
+    background: #181828;
+  }
+  .dataset-card .name {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #c8d0e0;
+    margin-bottom: 4px;
+  }
+  .dataset-card .meta {
+    font-size: 0.65rem;
+    color: #666;
+    line-height: 1.4;
+  }
+  .dataset-card .structural-val {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    font-family: 'Courier New', monospace;
+    color: #d4a843;
+  }
+
+  /* ---- CONNECTOR ARROWS ---- */
+  .arrow-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 18px 0;
+    position: relative;
+  }
+  .arrow-section .arrow-line {
+    width: 2px;
+    height: 36px;
+    background: linear-gradient(to bottom, #333, #555);
+    position: relative;
+  }
+  .arrow-section .arrow-line::after {
+    content: '';
+    position: absolute;
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 7px solid #555;
+  }
+  .arrow-label {
+    font-size: 0.68rem;
+    color: #777;
+    font-style: italic;
+    position: absolute;
+    right: calc(50% - 180px);
+    white-space: nowrap;
+  }
+
+  /* ---- SPLIT COMPARISON ---- */
+  .split-section {
+    display: grid;
+    grid-template-columns: 1fr 80px 1fr;
+    gap: 0;
+    margin-bottom: 0;
+  }
+  .split-panel {
+    padding: 20px;
+    border-radius: 8px;
+    position: relative;
+  }
+  .split-panel.diverge {
+    background: #1a1218;
+    border: 1px solid #3a2028;
+  }
+  .split-panel.converge {
+    background: #121a18;
+    border: 1px solid #1a3a28;
+  }
+  .split-panel h3 {
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 12px;
+  }
+  .split-panel.diverge h3 { color: #a05555; }
+  .split-panel.converge h3 { color: #55a068; }
+
+  .split-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    color: #444;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+  }
+
+  .null-list, .struct-list {
+    list-style: none;
+    font-size: 0.68rem;
+    font-family: 'Courier New', monospace;
+    line-height: 1.7;
+  }
+  .null-list li { color: #886666; }
+  .struct-list li { color: #66aa77; }
+  .null-list .val { color: #cc7777; font-weight: 700; }
+  .struct-list .val { color: #d4a843; font-weight: 700; }
+
+  .split-stat {
+    margin-top: 14px;
+    padding-top: 10px;
+    border-top: 1px solid #252530;
+    font-size: 0.72rem;
+  }
+  .split-panel.diverge .split-stat { color: #a05555; }
+  .split-panel.converge .split-stat { color: #55a068; }
+  .split-stat .num {
+    font-family: 'Courier New', monospace;
+    font-weight: 700;
+  }
+
+  /* ---- TIER 2: STATISTICAL TESTS ---- */
+  .tests-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .test-card {
+    background: #14141c;
+    border: 1px solid #252530;
+    border-radius: 6px;
+    padding: 12px 14px;
+    transition: border-color 0.2s;
+  }
+  .test-card:hover { border-color: #4a6fa5; }
+  .test-card .test-name {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #aab0c0;
+    margin-bottom: 4px;
+  }
+  .test-card .test-result {
+    font-size: 0.68rem;
+    font-family: 'Courier New', monospace;
+    color: #55a068;
+  }
+  .test-card .test-result.fail { color: #a05555; }
+
+  .convergence-box {
+    background: #1a1a10;
+    border: 2px solid #d4a843;
+    border-radius: 8px;
+    padding: 20px 28px;
+    text-align: center;
+    margin: 16px auto;
+    max-width: 600px;
+  }
+  .convergence-box .big-num {
+    font-size: 2.4rem;
+    font-weight: 700;
+    font-family: 'Courier New', monospace;
+    color: #d4a843;
+    letter-spacing: 0.04em;
+  }
+  .convergence-box .big-label {
+    font-size: 0.78rem;
+    color: #888;
+    margin-top: 4px;
+  }
+  .convergence-box .ci {
+    font-size: 0.72rem;
+    font-family: 'Courier New', monospace;
+    color: #999;
+    margin-top: 6px;
+  }
+
+  /* ---- BRIDGE ---- */
+  .bridge-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px 0;
+    position: relative;
+  }
+  .bridge-box {
+    background: #1c1420;
+    border: 1px dashed #6644aa;
+    border-radius: 8px;
+    padding: 14px 28px;
+    text-align: center;
+  }
+  .bridge-box .bridge-text {
+    font-size: 0.78rem;
+    color: #9977cc;
+    font-weight: 600;
+  }
+  .bridge-box .bridge-sub {
+    font-size: 0.68rem;
+    color: #665599;
+    margin-top: 4px;
+  }
+
+  /* ---- TIER 3: QUANTUM ---- */
+  .quantum-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .quantum-card {
+    background: #14121c;
+    border: 1px solid #2a2540;
+    border-radius: 8px;
+    padding: 18px 20px;
+    transition: border-color 0.2s;
+  }
+  .quantum-card:hover { border-color: #7755bb; }
+  .quantum-card h4 {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #b8a0dd;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .quantum-card p {
+    font-size: 0.72rem;
+    color: #888;
+    line-height: 1.6;
+  }
+  .quantum-card .q-val {
+    font-family: 'Courier New', monospace;
+    color: #d4a843;
+    font-weight: 700;
+  }
+  .quantum-card.full-width {
+    grid-column: 1 / -1;
+  }
+
+  .eigenspectrum {
+    display: flex;
+    gap: 6px;
+    margin-top: 10px;
+    align-items: flex-end;
+    height: 80px;
+  }
+  .eigen-bar {
+    flex: 1;
+    background: #2a2540;
+    border-radius: 3px 3px 0 0;
+    position: relative;
+    transition: background 0.2s;
+    min-width: 0;
+  }
+  .eigen-bar:hover { background: #3a3560; }
+  .eigen-bar.ground {
+    background: #d4a843;
+  }
+  .eigen-bar .eigen-label {
+    position: absolute;
+    bottom: -18px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.55rem;
+    font-family: 'Courier New', monospace;
+    color: #666;
+    white-space: nowrap;
+  }
+  .eigen-bar.ground .eigen-label { color: #d4a843; font-weight: 700; }
+
+  /* ---- ENTANGLEMENT ---- */
+  .entangle-section {
+    display: grid;
+    grid-template-columns: 1fr 60px 1fr;
+    gap: 0;
+    margin-top: 12px;
+  }
+  .entangle-panel {
+    background: #14121c;
+    border: 1px solid #2a2540;
+    border-radius: 8px;
+    padding: 16px 18px;
+    text-align: center;
+  }
+  .entangle-panel .ep-name {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #b8a0dd;
+    margin-bottom: 6px;
+  }
+  .entangle-panel .ep-init {
+    font-size: 0.68rem;
+    font-family: 'Courier New', monospace;
+    color: #777;
+  }
+  .entangle-panel .ep-final {
+    font-size: 0.85rem;
+    font-family: 'Courier New', monospace;
+    font-weight: 700;
+    color: #d4a843;
+    margin-top: 6px;
+  }
+  .entangle-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  .entangle-center::before {
+    content: '⟷';
+    font-size: 1.4rem;
+    color: #7755bb;
+  }
+
+  /* ---- CAPTION ---- */
+  .caption-block {
+    margin-top: 40px;
+    padding-top: 24px;
+    border-top: 1px solid #252530;
+  }
+  .caption-block .fig-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #aaa;
+    margin-bottom: 8px;
+  }
+  .caption-block p {
+    font-size: 0.78rem;
+    color: #777;
+    line-height: 1.7;
+    max-width: 900px;
+  }
+
+  /* ---- TIME EVOLUTION VIZ ---- */
+  .evolution-track {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    margin-top: 10px;
+    height: 24px;
+  }
+  .evo-step {
+    flex: 1;
+    height: 100%;
+    border-radius: 2px;
+    transition: opacity 0.2s;
+  }
+
+  @media (max-width: 768px) {
+    .dataset-grid { grid-template-columns: repeat(2, 1fr); }
+    .split-section { grid-template-columns: 1fr; gap: 12px; }
+    .split-center { display: none; }
+    .tests-grid { grid-template-columns: 1fr; }
+    .quantum-grid { grid-template-columns: 1fr; }
+    .entangle-section { grid-template-columns: 1fr; }
+    .entangle-center { padding: 8px 0; }
+  }
+</style>
+</head>
+<body>
+<div class="diagram-container">
+
+  <!-- TITLE -->
+  <div class="title-block">
+    <h1>The Jonah Study</h1>
+    <div class="subtitle">Full System Architecture: Glyph-8 through Glyph-Q</div>
+    <div class="author">Jair Valley &middot; Heyer Livin LLC &middot; 2026</div>
+  </div>
+
+  <!-- TIER 1: EMPIRICAL DATASETS -->
+  <div class="tier">
+    <div class="tier-label">Tier I &mdash; Empirical Base (12 Datasets)</div>
+    <div class="dataset-grid">
+      <div class="dataset-card">
+        <div class="name">PMIX (Tender Greens)</div>
+        <div class="meta">Oakland, 2026<br>Food service</div>
+        <div class="structural-val">0.4013</div>
+      </div>
+      <div class="dataset-card">
+        <div class="name">Savannah CF</div>
+        <div class="meta">Georgia, 1820–1860<br>Cotton factors</div>
+        <div class="structural-val">0.3916</div>
+      </div>
+      <div class="dataset-card">
+        <div class="name">Women World Leaders</div>
+        <div class="meta">Global, 2026<br>Political office</div>
+        <div class="structural-val">0.3970</div>
+      </div>
+      <div class="dataset-card">
+        <div class="name">Callback DR (Quillian)</div>
+        <div class="meta">USA, 1989–2017<br>Hiring discrimination</div>
+        <div class="structural-val">0.4000</div>
+      </div>
+      <div class="dataset-card">
+        <div class="name">EDD UI Claims</div>
+        <div class="meta">California, 2020–2026<br>Labor / unemployment</div>
+        <div class="structural-val">0.3834</div>
+      </div>
+      <div class="dataset-card">
+        <div class="name">Egypt (BCDE)</div>
+        <div class="meta">Antiquity<br>Civilizational structure</div>
+        <div class="structural-val">0.3800</div>
+      </div>
+      <div class="dataset-card">
+        <div class="name">Rome (BCDE)</div>
+        <div class="meta">Antiquity<br>Civilizational structure</div>
+        <div class="structural-val">0.3500</div>
+      </div>
+      <div class="dataset-card">
+        <div class="name">Persia (BCDE)</div>
+        <div class="meta">Antiquity<br>Civilizational structure</div>
+        <div class="structural-val">0.3700</div>
+      </div>
+      <div class="dataset-card">
+        <div class="name">Maya (BCDE)</div>
+        <div class="meta">Antiquity<br>Civilizational structure</div>
+        <div class="structural-val">0.4070</div>
+      </div>
+      <div class="dataset-card">
+        <div class="name">Electoral Ceiling</div>
+        <div class="meta">USA, multiple<br>Electoral politics</div>
+        <div class="structural-val">0.4300</div>
+      </div>
+      <div class="dataset-card">
+        <div class="name">Jordan Brand</div>
+        <div class="meta">1985–2024<br>Commercial / cultural</div>
+        <div class="structural-val">0.3900</div>
+      </div>
+      <div class="dataset-card">
+        <div class="name">Savannah (Abolitionary)</div>
+        <div class="meta">Georgia, 1820–1860<br>Abolitionist movement</div>
+        <div class="structural-val">0.3916</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ARROW DOWN -->
+  <div class="arrow-section">
+    <div class="arrow-line"></div>
+    <div class="arrow-label">100,000+ simulation trials per dataset</div>
+  </div>
+
+  <!-- SPLIT: RANDOM DIVERGENCE vs STRUCTURAL CONVERGENCE -->
+  <div class="tier">
+    <div class="tier-label">Tier II &mdash; Statistical Separation</div>
+    <div class="split-section">
+      <div class="split-panel diverge">
+        <h3>Random Null &rarr; Divergence</h3>
+        <ul class="null-list">
+          <li>PMIX &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="val">0.1667</span></li>
+          <li>Savannah CF &nbsp;&nbsp;&nbsp;<span class="val">0.0370</span></li>
+          <li>Women Leaders &nbsp;<span class="val">0.0000</span></li>
+          <li>Callback DR &nbsp;&nbsp;&nbsp;<span class="val">0.5000</span></li>
+          <li>EDD UI &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="val">1.0000</span></li>
+          <li>Egypt &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="val">0.5000</span></li>
+          <li>Rome &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="val">0.5000</span></li>
+          <li>Persia &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="val">0.5000</span></li>
+          <li>Maya &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="val">0.5000</span></li>
+          <li>Electoral &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="val">0.5000</span></li>
+          <li>Jordan Brand &nbsp;&nbsp;<span class="val">0.5000</span></li>
+          <li>Savannah Abol. &nbsp;<span class="val">0.0370</span></li>
+        </ul>
+        <div class="split-stat">
+          Span: <span class="num">1.000</span><br>
+          Each null converges to a <em>different</em> value
+        </div>
+      </div>
+
+      <div class="split-center">VS</div>
+
+      <div class="split-panel converge">
+        <h3>Structural Constants &rarr; Convergence</h3>
+        <ul class="struct-list">
+          <li>PMIX &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="val">0.4013</span></li>
+          <li>Savannah CF &nbsp;&nbsp;&nbsp;<span class="val">0.3916</span></li>
+          <li>Women Leaders &nbsp;<span class="val">0.3970</span></li>
+          <li>Callback DR &nbsp;&nbsp;&nbsp;<span class="val">0.4000</span></li>
+          <li>EDD UI &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="val">0.3834</span></li>
+          <li>Egypt &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="val">0.3800</span></li>
+          <li>Rome &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="val">0.3500</span></li>
+          <li>Persia &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="val">0.3700</span></li>
+          <li>Maya &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="val">0.4070</span></li>
+          <li>Electoral &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="val">0.4300</span></li>
+          <li>Jordan Brand &nbsp;&nbsp;<span class="val">0.3900</span></li>
+          <li>Savannah Abol. &nbsp;<span class="val">0.3916</span></li>
+        </ul>
+        <div class="split-stat">
+          SD: <span class="num">0.0198</span> &middot; Range: <span class="num">0.0800</span><br>
+          All values cluster within a 2.0 pp band
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ARROW DOWN -->
+  <div class="arrow-section">
+    <div class="arrow-line"></div>
+    <div class="arrow-label">Null hypothesis rejection across six tests</div>
+  </div>
+
+  <!-- STATISTICAL TESTS -->
+  <div class="tier">
+    <div class="tier-label">Formal Tests</div>
+    <div class="tests-grid">
+      <div class="test-card">
+        <div class="test-name">Test A — vs Uniform[0,1]</div>
+        <div class="test-result">p = 0.00e+00</div>
+      </div>
+      <div class="test-card">
+        <div class="test-name">Test B — vs Per-Dataset Null</div>
+        <div class="test-result">p = 0.00e+00</div>
+      </div>
+      <div class="test-card">
+        <div class="test-name">Test C — Kolmogorov-Smirnov</div>
+        <div class="test-result">D = 0.5627, p = 0.0004</div>
+      </div>
+      <div class="test-card">
+        <div class="test-name">Test D — Levene Variance</div>
+        <div class="test-result">W = 6.5401, p = 0.0180</div>
+      </div>
+      <div class="test-card">
+        <div class="test-name">Test E — t-test: &mu; = 0.39</div>
+        <div class="test-result">t = 0.1738, p = 0.8652</div>
+      </div>
+      <div class="test-card">
+        <div class="test-name">Test F — Clustering Permutation</div>
+        <div class="test-result">p = 0.00e+00</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONVERGENCE VALUE -->
+  <div class="convergence-box">
+    <div class="big-num">X&#772; = 0.390992</div>
+    <div class="big-label">Grand Mean of 12 Structural Constants</div>
+    <div class="ci">95% CI: [0.3798, 0.4022] &middot; SD = 0.019778</div>
+  </div>
+
+  <!-- BRIDGE: CLASSICAL TO QUANTUM -->
+  <div class="bridge-section">
+    <div class="bridge-box">
+      <div class="bridge-text">Classical &rarr; Quantum Bridge</div>
+      <div class="bridge-sub">Empirical attractor 0.3910 &equiv; Ground state eigenvalue &lambda;&#8320; = 0.39</div>
+    </div>
+  </div>
+
+  <!-- ARROW DOWN -->
+  <div class="arrow-section">
+    <div class="arrow-line"></div>
+    <div class="arrow-label">Glyph-Q: quantum constraint derivation</div>
+  </div>
+
+  <!-- TIER 3: QUANTUM ARCHITECTURE -->
+  <div class="tier">
+    <div class="tier-label">Tier III &mdash; Quantum Constraint Architecture (Glyph-Q)</div>
+    <div class="quantum-grid">
+
+      <div class="quantum-card full-width">
+        <h4>Constraint Hamiltonian H (8&times;8 Hermitian)</h4>
+        <p>The system exists in superposition of all states simultaneously. The constraint is a Hamiltonian operator. The 0.39 attractor is the ground state eigenvalue &mdash; not approximated, exact.</p>
+        <div class="eigenspectrum">
+          <div class="eigen-bar ground" style="height: 34%;">
+            <div class="eigen-label">&lambda;&#8320;=0.39</div>
+          </div>
+          <div class="eigen-bar" style="height: 43%;">
+            <div class="eigen-label">0.50</div>
+          </div>
+          <div class="eigen-bar" style="height: 53%;">
+            <div class="eigen-label">0.61</div>
+          </div>
+          <div class="eigen-bar" style="height: 62%;">
+            <div class="eigen-label">0.72</div>
+          </div>
+          <div class="eigen-bar" style="height: 72%;">
+            <div class="eigen-label">0.83</div>
+          </div>
+          <div class="eigen-bar" style="height: 81%;">
+            <div class="eigen-label">0.94</div>
+          </div>
+          <div class="eigen-bar" style="height: 91%;">
+            <div class="eigen-label">1.05</div>
+          </div>
+          <div class="eigen-bar" style="height: 100%;">
+            <div class="eigen-label">1.16</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="quantum-card">
+        <h4>Imaginary-Time Evolution</h4>
+        <p>|&psi;(&tau;)&rang; ~ e<sup>-H&tau;</sup> |&psi;(0)&rang;</p>
+        <p style="margin-top: 8px;">&tau; = 0: uniform superposition, &lang;x/N&rang; = <span class="q-val">0.500</span><br>
+        &tau; &rarr; &infin;: ground state only, &lang;x/N&rang; &rarr; <span class="q-val">0.390</span></p>
+        <div class="evolution-track">
+          <div class="evo-step" style="background: #556688;"></div>
+          <div class="evo-step" style="background: #557788;"></div>
+          <div class="evo-step" style="background: #558877;"></div>
+          <div class="evo-step" style="background: #669966;"></div>
+          <div class="evo-step" style="background: #778844;"></div>
+          <div class="evo-step" style="background: #998844;"></div>
+          <div class="evo-step" style="background: #aa8844;"></div>
+          <div class="evo-step" style="background: #bb9933;"></div>
+          <div class="evo-step" style="background: #cc9933;"></div>
+          <div class="evo-step" style="background: #d4a843;"></div>
+          <div class="evo-step" style="background: #d4a843;"></div>
+          <div class="evo-step" style="background: #d4a843;"></div>
+        </div>
+        <p style="margin-top: 6px; font-size: 0.6rem; color: #555;">unconstrained &rarr; fully constrained</p>
+      </div>
+
+      <div class="quantum-card">
+        <h4>Epsilon Quantum: Irreducible Freedom</h4>
+        <p>&epsilon; = &radic;2 &minus; 1 = <span class="q-val">0.41421356</span></p>
+        <p style="margin-top: 8px;">Fixed-point equation:<br>&epsilon; = 1 / (2 + &epsilon;)<br>&epsilon;&sup2; + 2&epsilon; &minus; 1 = 0</p>
+        <p style="margin-top: 8px;">Even under full constraint, the system retains a minimum residual amplitude of &epsilon; in the free direction. This is the irreducible quantum of freedom.</p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ENTANGLEMENT DEMONSTRATION -->
+  <div class="tier" style="margin-top: 20px;">
+    <div class="tier-label">Structural Entanglement Demonstration</div>
+    <div class="entangle-section">
+      <div class="entangle-panel">
+        <div class="ep-name">PMIX 2026</div>
+        <div class="ep-init">Initial &lang;x/N&rang;: 0.6748</div>
+        <div class="ep-final">&rarr; 0.3927</div>
+      </div>
+      <div class="entangle-center"></div>
+      <div class="entangle-panel">
+        <div class="ep-name">Savannah 1835</div>
+        <div class="ep-init">Initial &lang;x/N&rang;: 0.1626</div>
+        <div class="ep-final">&rarr; 0.3759</div>
+      </div>
+    </div>
+    <p style="text-align: center; font-size: 0.72rem; color: #665599; margin-top: 12px; font-style: italic;">
+      Same Hamiltonian eigenstructure. Different centuries. Convergence &Delta; = 0.0168.
+    </p>
+  </div>
+
+  <!-- CAPTION -->
+  <div class="caption-block">
+    <div class="fig-label">Figure 1. The Jonah Study: Full System Architecture, Glyph-8 through Glyph-Q.</div>
+    <p>
+      Twelve structurally constrained datasets spanning food service, law, politics, labor, and ancient civilizations
+      independently converge to a structural constant of 0.3910 (SD = 0.0198). Classical simulation (Glyph-8)
+      establishes the empirical attractor across 100,000+ trials per dataset; six formal statistical tests reject the
+      random-process null hypothesis at all tested significance thresholds. Quantum reformulation (Glyph-Q)
+      derives 0.39 as the ground state eigenvalue of an 8&times;8 constraint Hamiltonian, with imaginary-time
+      evolution modeling structural pressure collapsing superposition to the attractor state. The epsilon quantum
+      (&epsilon; = &radic;2 &minus; 1 &approx; 0.4142) identifies the irreducible minimum freedom retained under full
+      constraint. Structural entanglement between PMIX 2026 and Savannah 1835 confirms shared Hamiltonian
+      eigenstructure across centuries. The convergence is not coincidental. It is eigenstructural.
+    </p>
+  </div>
+
+</div>
+</body>
+</html>
