@@ -39,6 +39,11 @@ app = FastAPI(
 if (BASE / "static").is_dir():
     app.mount("/static", StaticFiles(directory=str(BASE / "static")), name="static")
 
+# Serve the site/ directory (urban_bloomberg.html, design-tokens.css, ...)
+# so pages can link the canonical token file at /site/design-tokens.css.
+if (BASE / "site").is_dir():
+    app.mount("/site", StaticFiles(directory=str(BASE / "site")), name="site")
+
 # --- KairoGLYPH intake + content API (additive) ---
 # Mounts /api/intake, /api/events, /api/content, /api/subscribe, /api/db/health.
 # Registered here, before the route definitions below, so the catch-all
@@ -68,6 +73,15 @@ try:
     app.include_router(kairo_agents_router)
 except Exception as _kairo_agents_err:  # pragma: no cover
     print(f"[kairo] agents router not loaded: {_kairo_agents_err}")
+
+# KairoGLYPH ledger census — /api/ledger serves the consolidated
+# local-metadata-ledger snapshot (db/ledger_snapshot.json).
+try:
+    from kairo_ledger import router as kairo_ledger_router
+
+    app.include_router(kairo_ledger_router)
+except Exception as _kairo_ledger_err:  # pragma: no cover
+    print(f"[kairo] ledger router not loaded: {_kairo_ledger_err}")
 
 
 def _utc_now_iso() -> str:

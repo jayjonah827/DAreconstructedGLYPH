@@ -1,0 +1,106 @@
+/* ============================================================
+   URBAN BLOOMBERG — DESIGN TOKENS
+   Single canonical token source. Do not create a second copy.
+
+   Provenance:
+   - Values extracted verbatim from site/urban_bloomberg.html <style> :root
+   - Formalized per urban-bloomberg-design-system.md v0.1.0 (2026-05-20)
+   - Rule from the spec: formalize what already exists; do not redesign.
+
+   Adoption (additive, nothing breaks):
+   - Load this file ahead of any component <style> block.
+   - The legacy --bg / --panel / ... names in section 7 are kept as
+     aliases, so existing urban_bloomberg.html markup keeps rendering.
+   - Do not hand-edit hex downstream — reference the token.
+   ============================================================ */
+
+:root {
+  color-scheme: dark;
+
+  /* ---- 1. Raw palette — literal hex in use (spec 3.1) ---- */
+  --ink-900: #090b0d;   /* page background */
+  --ink-850: #0b0f12;   /* list items, table header, inset blocks */
+  --ink-820: #0c1013;   /* topbar background */
+  --ink-810: #0c1114;   /* pill background */
+  --ink-800: #0d1215;   /* metric cell background */
+  --ink-750: #101418;   /* pane body */
+  --ink-700: #151b20;   /* pane header */
+  --ink-650: #182126;   /* button background */
+  --line-600: #29323a;  /* primary border + grid hairline */
+  --line-500: #202a31;  /* inner borders — list / table rows */
+  --text-100: #e8edf0;  /* primary text */
+  --text-400: #91a0a8;  /* secondary / muted text */
+  --signal-green:  #70d878;
+  --signal-amber:  #e2b75b;
+  --signal-red:    #ef7770;
+  --signal-cyan:   #62c7d7;
+  --signal-violet: #b5a1ff;
+
+  /* ---- 2. Semantic tokens — components reference THESE (spec 3.2) ---- */
+  --bg:              var(--ink-900);
+  --surface-raised:  var(--ink-750);
+  --surface-header:  var(--ink-700);
+  --surface-inset:   var(--ink-850);
+  --surface-control: var(--ink-650);
+  --surface-topbar:  var(--ink-820);
+  --surface-pill:    var(--ink-810);
+  --surface-metric:  var(--ink-800);
+  --border:          var(--line-600);
+  --border-subtle:   var(--line-500);
+  --text:            var(--text-100);
+  --text-muted:      var(--text-400);
+  --status-ok:       var(--signal-green);   /* present / live / read-only confirmed */
+  --status-absence:  var(--signal-amber);   /* absent / empty / unreadable (recorded) */
+  --status-error:    var(--signal-red);     /* transport or runtime failure ONLY */
+  --accent-data:     var(--signal-cyan);    /* code, source paths, data references */
+  --accent-route:    var(--signal-violet);  /* routes, structural / classification accents */
+
+  /* ---- 3. GLYPH classification bands — color per band NAME only (spec 3.3) ---- */
+  /* The UI colors the band string the engine emits; it never computes the band. */
+  --band-unmeasured:   var(--signal-red);
+  --band-subordinated: var(--signal-amber);
+  --band-structural:   var(--signal-cyan);
+  --band-dominant:     var(--signal-violet);
+
+  /* ---- 4. Typography — one family, five steps (spec 3.4) ---- */
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+               "Liberation Mono", monospace;
+  --font-size-base: 13px;
+  --line-height-base: 1.45;
+  --font-weight-regular: 400;
+  --font-weight-bold: 700;
+  --type-display-size: 20px;     /* h1 — 700, no letter-spacing, nowrap */
+  --type-metric-size: 22px;      /* metric value — 400, line-height 1 */
+  --type-pane-title-size: 13px;  /* h2 — 400, UPPERCASE */
+  --type-body-size: 13px;        /* base — 400, line-height 1.45 */
+  --type-label-size: 11px;       /* label / caption — 400, UPPERCASE */
+
+  /* ---- 5. Spacing scale — on-scale values only (spec 3.5) ---- */
+  --space-2: 2px;
+  --space-5: 5px;
+  --space-6: 6px;
+  --space-7: 7px;
+  --space-8: 8px;
+  --space-10: 10px;
+  --space-12: 12px;
+  --space-16: 16px;
+  --space-18: 18px;
+
+  /* ---- 6. Radius, border, elevation — no drop shadows (spec 3.6) ---- */
+  --radius-control: 6px;
+  --radius-inset: 5px;
+  --radius-pill: 999px;
+  --border-width: 1px;
+
+  /* ---- 7. Legacy aliases — keep existing urban_bloomberg.html working (spec 8) ---- */
+  --panel:   var(--surface-raised);
+  --panel-2: var(--surface-header);
+  --line:    var(--border);
+  --muted:   var(--text-muted);
+  --green:   var(--signal-green);
+  --amber:   var(--signal-amber);
+  --red:     var(--signal-red);
+  --cyan:    var(--signal-cyan);
+  --violet:  var(--signal-violet);
+  /* --bg and --text keep their names from section 2 above */
+}

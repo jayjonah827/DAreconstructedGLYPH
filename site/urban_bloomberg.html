@@ -1,0 +1,595 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Urban Bloomberg</title>
+  <link rel="stylesheet" href="/site/design-tokens.css">
+  <style>
+    /* Design tokens live once in site/design-tokens.css, linked above.
+       Do not reintroduce a :root token block here. */
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    button {
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #182126;
+      color: var(--text);
+      min-height: 34px;
+      padding: 0 12px;
+      font: inherit;
+      cursor: pointer;
+    }
+
+    button:hover {
+      border-color: var(--cyan);
+    }
+
+    .shell {
+      min-height: 100vh;
+      display: grid;
+      grid-template-rows: auto auto 1fr;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 16px 18px 12px;
+      border-bottom: 1px solid var(--line);
+      background: #0c1013;
+    }
+
+    .brand {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 0;
+      white-space: nowrap;
+    }
+
+    .stamp {
+      color: var(--muted);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--amber);
+      box-shadow: 0 0 12px rgba(226, 183, 91, 0.7);
+    }
+
+    .dot.live {
+      background: var(--green);
+      box-shadow: 0 0 12px rgba(112, 216, 120, 0.7);
+    }
+
+    .dot.error {
+      background: var(--red);
+      box-shadow: 0 0 12px rgba(239, 119, 112, 0.7);
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(120px, 1fr));
+      gap: 1px;
+      border-bottom: 1px solid var(--line);
+      background: var(--line);
+    }
+
+    .metric {
+      min-height: 72px;
+      padding: 12px;
+      background: #0d1215;
+    }
+
+    .metric span {
+      display: block;
+      color: var(--muted);
+      font-size: 11px;
+      text-transform: uppercase;
+    }
+
+    .metric strong {
+      display: block;
+      margin-top: 5px;
+      font-size: 22px;
+      line-height: 1;
+    }
+
+    .metric em {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      font-style: normal;
+      font-size: 11px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    main {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 10px;
+      padding: 10px;
+    }
+
+    .pane {
+      grid-column: span 4;
+      min-height: 260px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--panel);
+      overflow: hidden;
+    }
+
+    .pane.wide {
+      grid-column: span 8;
+    }
+
+    .pane.full {
+      grid-column: span 12;
+    }
+
+    .pane header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--line);
+      background: var(--panel-2);
+    }
+
+    .pane h2 {
+      margin: 0;
+      font-size: 13px;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+
+    .pane .body {
+      padding: 12px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 22px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      color: var(--muted);
+      background: #0c1114;
+      font-size: 11px;
+      white-space: nowrap;
+    }
+
+    .pill.present,
+    .pill.live {
+      color: var(--green);
+      border-color: rgba(112, 216, 120, 0.45);
+    }
+
+    .pill.absent,
+    .pill.empty,
+    .pill.unreadable {
+      color: var(--amber);
+      border-color: rgba(226, 183, 91, 0.45);
+    }
+
+    .kv {
+      display: grid;
+      grid-template-columns: minmax(115px, 0.6fr) minmax(0, 1fr);
+      gap: 6px 10px;
+      margin-bottom: 12px;
+    }
+
+    .kv div:nth-child(odd) {
+      color: var(--muted);
+    }
+
+    .list {
+      display: grid;
+      gap: 7px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .list li {
+      border: 1px solid #202a31;
+      border-radius: 5px;
+      padding: 8px;
+      background: #0b0f12;
+      overflow-wrap: anywhere;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+    }
+
+    th,
+    td {
+      padding: 7px 8px;
+      border-bottom: 1px solid #202a31;
+      text-align: left;
+      vertical-align: top;
+      overflow-wrap: anywhere;
+    }
+
+    th {
+      color: var(--muted);
+      font-weight: 500;
+      background: #0b0f12;
+    }
+
+    code {
+      color: var(--cyan);
+      word-break: break-word;
+    }
+
+    .accent-green {
+      color: var(--green);
+    }
+
+    .accent-amber {
+      color: var(--amber);
+    }
+
+    .accent-cyan {
+      color: var(--cyan);
+    }
+
+    .accent-violet {
+      color: var(--violet);
+    }
+
+    .empty-state {
+      color: var(--muted);
+      border: 1px dashed var(--line);
+      border-radius: 6px;
+      padding: 12px;
+    }
+
+    @media (max-width: 1100px) {
+      .metrics {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .pane,
+      .pane.wide {
+        grid-column: span 6;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .metrics {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      main {
+        grid-template-columns: 1fr;
+      }
+
+      .pane,
+      .pane.wide,
+      .pane.full {
+        grid-column: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <section class="topbar">
+      <div class="brand">
+        <h1>Urban Bloomberg</h1>
+        <div class="stamp" id="stamp">waiting for chain snapshot</div>
+      </div>
+      <div class="status">
+        <span class="dot" id="dot"></span>
+        <span id="status">loading</span>
+        <button id="refresh" type="button">Refresh</button>
+      </div>
+    </section>
+
+    <section class="metrics" id="metrics"></section>
+
+    <main>
+      <section class="pane wide">
+        <header>
+          <h2>Ledger Scout</h2>
+          <span class="pill" id="ledger-status">unknown</span>
+        </header>
+        <div class="body" id="ledger"></div>
+      </section>
+
+      <section class="pane">
+        <header>
+          <h2>X/Y Splitter</h2>
+          <span class="pill" id="xy-status">unknown</span>
+        </header>
+        <div class="body" id="xy"></div>
+      </section>
+
+      <section class="pane">
+        <header>
+          <h2>Constraint Accountant</h2>
+          <span class="pill live">read only</span>
+        </header>
+        <div class="body" id="accountant"></div>
+      </section>
+
+      <section class="pane wide">
+        <header>
+          <h2>Action Router</h2>
+          <span class="pill live">events and routes</span>
+        </header>
+        <div class="body" id="router"></div>
+      </section>
+
+      <section class="pane">
+        <header>
+          <h2>KGHL Database</h2>
+          <span class="pill" id="db-status">unknown</span>
+        </header>
+        <div class="body" id="database"></div>
+      </section>
+
+      <section class="pane">
+        <header>
+          <h2>Raw Ledgers</h2>
+          <span class="pill live">absence aware</span>
+        </header>
+        <div class="body" id="raw"></div>
+      </section>
+
+      <section class="pane">
+        <header>
+          <h2>Voice Handoff</h2>
+          <span class="pill" id="voice-status">unknown</span>
+        </header>
+        <div class="body" id="voice"></div>
+      </section>
+
+      <section class="pane full">
+        <header>
+          <h2>Absence Ledger</h2>
+          <span class="pill" id="absence-status">unknown</span>
+        </header>
+        <div class="body" id="absences"></div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const ids = (id) => document.getElementById(id);
+
+    function esc(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;");
+    }
+
+    function pillClass(status) {
+      return `pill ${esc(status || "absent")}`;
+    }
+
+    function kv(rows) {
+      return `<div class="kv">${rows.map(([k, v]) => `<div>${esc(k)}</div><div>${v}</div>`).join("")}</div>`;
+    }
+
+    function table(rows, columns) {
+      if (!rows || rows.length === 0) return `<div class="empty-state">absence recorded or no rows available</div>`;
+      const head = columns.map((col) => `<th>${esc(col.label)}</th>`).join("");
+      const body = rows.map((row) => {
+        return `<tr>${columns.map((col) => `<td>${esc(row[col.key])}</td>`).join("")}</tr>`;
+      }).join("");
+      return `<table><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table>`;
+    }
+
+    function metric(label, value, note = "") {
+      return `<div class="metric"><span>${esc(label)}</span><strong>${esc(value)}</strong><em>${esc(note)}</em></div>`;
+    }
+
+    function renderMetrics(data) {
+      const s = data.summary || {};
+      ids("metrics").innerHTML = [
+        metric("events", s.event_count ?? 0, "gev records"),
+        metric("KGHL rows", s.kghl_row_count ?? 0, s.database_status || "unknown"),
+        metric("routes", s.route_count ?? 0, "route map"),
+        metric("arcade", s.arcade_demo_count ?? 0, "promoted demos"),
+        metric("absences", s.absence_count ?? 0, "recorded states"),
+        metric("ledger", s.ledger_scout_status || "unknown", "scout upstream")
+      ].join("");
+    }
+
+    function renderLedger(ledger) {
+      ids("ledger-status").className = pillClass(ledger.status);
+      ids("ledger-status").textContent = ledger.status || "unknown";
+      const totals = ledger.totals || {};
+      const rows = Object.entries(totals).map(([key, value]) => [
+        key.replaceAll("_", " "),
+        `<span class="accent-cyan">${esc(value || "not reported")}</span>`
+      ]);
+      rows.push(["report dir", `<code>${esc(ledger.report_dir || "absent")}</code>`]);
+      ids("ledger").innerHTML = kv(rows) + table(ledger.compact_rows || [], [
+        { key: "account", label: "account" },
+        { key: "folder", label: "folder" },
+        { key: "decision_bucket", label: "bucket" },
+        { key: "count", label: "count" },
+        { key: "action", label: "action" }
+      ]);
+    }
+
+    function renderXY(xy) {
+      ids("xy-status").className = pillClass(xy.status);
+      ids("xy-status").textContent = xy.status || "unknown";
+      const actions = (xy.action_set || []).map((item) => `<span class="pill">${esc(item)}</span>`).join(" ");
+      const preview = (xy.preview || []).map((line) => `<li>${esc(line)}</li>`).join("");
+      ids("xy").innerHTML = kv([
+        ["packet", `<code>${esc(xy.path || "absent")}</code>`],
+        ["actions", actions || `<span class="accent-amber">absent</span>`]
+      ]) + `<ul class="list">${preview || "<li>absence recorded</li>"}</ul>`;
+    }
+
+    function renderAccountant(accountant) {
+      ids("accountant").innerHTML = kv([
+        ["mutation", `<span class="accent-green">${esc(accountant.rules?.source_mutation_allowed === false ? "blocked" : "unknown")}</span>`],
+        ["delete candidates", `<span class="accent-amber">${esc(accountant.rules?.delete_candidates || "unknown")}</span>`],
+        ["dry-run moves", `<span class="accent-cyan">${esc(accountant.rules?.dry_run_moves || "unknown")}</span>`]
+      ]) + table(Object.entries(accountant.decision_buckets || {}).map(([bucket, count]) => ({ bucket, count })), [
+        { key: "bucket", label: "bucket" },
+        { key: "count", label: "count" }
+      ]);
+    }
+
+    function renderRouter(router) {
+      const events = router.events || [];
+      const routes = router.routes?.routes || [];
+      const demos = router.arcade?.demos || [];
+      ids("router").innerHTML =
+        `<h3 class="accent-green">events</h3>` +
+        table(events, [
+          { key: "record_id", label: "record" },
+          { key: "domain", label: "domain" },
+          { key: "zone", label: "zone" },
+          { key: "output_produced", label: "output" }
+        ]) +
+        `<h3 class="accent-violet">routes</h3>` +
+        table(routes, [
+          { key: "name", label: "name" },
+          { key: "path", label: "path" },
+          { key: "role", label: "role" },
+          { key: "title", label: "title" }
+        ]) +
+        `<h3 class="accent-cyan">arcade demos</h3>` +
+        table(demos, [
+          { key: "name", label: "demo" },
+          { key: "path", label: "path" },
+          { key: "size_bytes", label: "bytes" }
+        ]);
+    }
+
+    function renderDatabase(database) {
+      ids("db-status").className = pillClass(database.status);
+      ids("db-status").textContent = database.status || "unknown";
+      ids("database").innerHTML = kv([
+        ["path", `<code>${esc(database.path || "absent")}</code>`],
+        ["rows", `<span class="accent-green">${esc(database.row_count ?? 0)}</span>`]
+      ]) + table(database.rows || [], [
+        { key: "record_id", label: "record" },
+        { key: "domain", label: "domain" },
+        { key: "zone", label: "zone" },
+        { key: "output_produced", label: "output" }
+      ]);
+    }
+
+    function renderRaw(raw) {
+      ids("raw").innerHTML = kv([
+        ["raw capture", `<span class="accent-cyan">${esc(raw.raw_capture_count ?? "absence")}</span>`],
+        ["segmented", `<span class="accent-cyan">${esc(raw.segmented_events_count ?? "absence")}</span>`],
+        ["absence records", `<span class="accent-amber">${esc(raw.absence_records_count ?? "absence")}</span>`],
+        ["disc reports", `<span class="accent-cyan">${esc(raw.disc_report_count ?? 0)}</span>`]
+      ]);
+    }
+
+    function renderVoice(voice) {
+      ids("voice-status").className = pillClass(voice.status);
+      ids("voice-status").textContent = voice.status || "unknown";
+      ids("voice").innerHTML = kv([
+        ["path", `<code>${esc(voice.path || "absent")}</code>`],
+        ["schema", esc(voice.schema || "absence")],
+        ["events kept", esc(voice.events_kept ?? "absence")],
+        ["latest", `<code>${esc(voice.latest_event || "absence")}</code>`]
+      ]);
+    }
+
+    function renderAbsences(absences) {
+      ids("absence-status").className = absences.length ? "pill absent" : "pill present";
+      ids("absence-status").textContent = `${absences.length} recorded`;
+      ids("absences").innerHTML = table(absences, [
+        { key: "source_id", label: "source" },
+        { key: "observed_state", label: "state" },
+        { key: "meaning", label: "meaning" },
+        { key: "next_action", label: "next action" }
+      ]);
+    }
+
+    function render(data) {
+      ids("stamp").textContent = `${data.generated_at} | ${data.repo_root}`;
+      renderMetrics(data);
+      renderLedger(data.chain.ledger_scout || {});
+      renderXY(data.chain.xy_splitter || {});
+      renderAccountant(data.chain.constraint_accountant || {});
+      renderRouter(data.chain.action_router || {});
+      renderDatabase(data.chain.kghl_database || {});
+      renderRaw(data.chain.raw_ledgers || {});
+      renderVoice(data.chain.action_router?.voice_handoff || {});
+      renderAbsences(data.absences || []);
+    }
+
+    async function load() {
+      ids("status").textContent = "loading";
+      ids("dot").className = "dot";
+      try {
+        const response = await fetch("/api/urban-bloomberg/chain", { cache: "no-store" });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const data = await response.json();
+        render(data);
+        ids("status").textContent = "live";
+        ids("dot").className = "dot live";
+      } catch (error) {
+        ids("status").textContent = error.message;
+        ids("dot").className = "dot error";
+      }
+    }
+
+    ids("refresh").addEventListener("click", load);
+    load();
+  </script>
+</body>
+</html>
