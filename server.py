@@ -29,6 +29,9 @@ EVENTS_DIR = BASE / "events"
 EVENTS_DIR.mkdir(exist_ok=True)
 EVENTS_RAW_DIR = BASE / "events_raw"
 HANDOFF_STATUS_PATH = BASE / "reports" / "cloud_handoff" / "glyph_voice_status.json"
+HEARTBEAT_STATE_PATH = BASE / "state" / "heartbeat_state.json"
+AUDIT_INDEX_PATH = BASE / "state" / "audit_index.json"
+ROUTE_MAP_PATH = BASE / "GLYPH_ROUTE_MAP.json"
 
 app = FastAPI(
     title="Glyph Assembly API",
@@ -146,6 +149,56 @@ def _active_source_layers() -> dict[str, Any]:
         "source_mutation_allowed": False,
         "raw_payload_exported": False,
         "full_raw_archive_export": False,
+    }
+
+
+def _public_system_state() -> dict[str, Any]:
+    heartbeat = _safe_json(HEARTBEAT_STATE_PATH) or {}
+    audit_index = _safe_json(AUDIT_INDEX_PATH) or {}
+    route_map = _safe_json(ROUTE_MAP_PATH) or {}
+    route_rows = route_map.get("routes", {})
+
+    return {
+        "schema": "glyph_system_status_v1",
+        "generated_at": _utc_now_iso(),
+        "service": {
+            "name": "The-reconstruction-of-Glyph-",
+            "status": "live",
+            "role": "backend-system-engine",
+            "health_endpoint": "/api/health",
+            "database_health_endpoint": "/api/db/health",
+        },
+        "controller": {
+            "available": (BASE / "controller" / "main.py").is_file(),
+            "authority": "local-reconstruction-repo",
+            "phase": heartbeat.get("phase", "unknown"),
+            "cycle": heartbeat.get("cycle"),
+            "current_window": heartbeat.get("current_window"),
+            "waiting_for_tock": heartbeat.get("waiting_for_tock"),
+            "updated_at": heartbeat.get("updated_at"),
+            "last_event": heartbeat.get("last_event"),
+            "counters": heartbeat.get("counters", {}),
+            "audit_run_count": len(audit_index.get("runs", [])),
+            "audited_agent_count": len(audit_index.get("latest_by_agent", {})),
+        },
+        "public_routes": [
+            {
+                "name": name,
+                "path": row.get("path"),
+                "role": row.get("content_role"),
+            }
+            for name, row in route_rows.items()
+        ],
+        "dashboard": {
+            "surface": "heyerlivindesign",
+            "backend_proxy": "/api/glyph/:path*",
+            "status_endpoint": "/api/system-status",
+        },
+        "boundaries": {
+            "advances_controller_state": False,
+            "starts_server_process": False,
+            "exports_secrets": False,
+        },
     }
 
 
@@ -303,6 +356,7 @@ def layers() -> dict[str, Any]:
             "glyph_source_layers": "/api/glyph/source-layers",
             "glyph_voice_handoff": "/api/glyph/voice-handoff",
             "glyph_local_to_public_bridge": "/api/glyph/bridge",
+            "glyph_system_status": "/api/system-status",
             "urban_bloomberg": "/urban-bloomberg",
             "urban_bloomberg_chain": "/api/urban-bloomberg/chain",
         }
@@ -371,6 +425,11 @@ def glyph_bridge() -> dict[str, Any]:
     }
 
 
+@app.get("/api/system-status")
+def system_status() -> dict[str, Any]:
+    return _public_system_state()
+
+
 @app.get("/api/clock")
 def orbital_clock() -> dict[str, Any]:
     now = datetime.now(timezone.utc)
@@ -431,6 +490,7 @@ def terminal_dashboard_summary() -> dict[str, Any]:
             "glyph_source_layers": "/api/glyph/source-layers",
             "glyph_voice_handoff": "/api/glyph/voice-handoff",
             "glyph_local_to_public_bridge": "/api/glyph/bridge",
+            "glyph_system_status": "/api/system-status",
             "urban_bloomberg": "/urban-bloomberg",
             "urban_bloomberg_chain": "/api/urban-bloomberg/chain",
         },
